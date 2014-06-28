@@ -7,6 +7,6 @@ import model.Player;
  */
 public abstract class AbstractPiece implements Piece {
 
-    public AbstractPiece(Player p){
-    }
+
+    abstract String getTextualRepresentation();
 }

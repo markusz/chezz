@@ -1,11 +1,15 @@
 package model.pieces;
 
-import model.Field;
+import model.Square;
 import utils.MoveUtil;
 
 import java.util.ArrayList;
 
-public class Queen {
+public class Queen extends AbstractPiece {
+
+  public Queen(int identifiert){
+
+  }
 
     /**
      * Adds a field if the king is actually allowed to move there
@@ -23,13 +27,13 @@ public class Queen {
      * @param row
      * @param column
      * @param colour
-     * @param field
+     * @param square
      * @return
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
     public static ArrayList addKingMoveConsideringAttackedFields(int row,
-                                                                 int column, String colour, Field[][] field) throws Exception {
+                                                                 int column, String colour, Square[][] square) throws Exception {
 
         // FieldEnsure.fieldFiller(field);
 
@@ -37,17 +41,17 @@ public class Queen {
         temp.clear();
 
         if (!(row < 0 || column < 0 || row > 7 || column > 7)) {
-            boolean opponentAttacksField = field[row][column]
+            boolean opponentAttacksField = square[row][column]
                     .isThreatendByWhite();
             if (colour.equals("white"))
-                opponentAttacksField = field[row][column].isThreatendByBlack();
-            if (field[row][column].getEmpty()) {
+                opponentAttacksField = square[row][column].isThreatendByBlack();
+            if (square[row][column].getEmpty()) {
                 if (!opponentAttacksField)
-                    temp.add(field[row][column]);
+                    temp.add(square[row][column]);
 
             } else {
-                if (!field[row][column].getFigure().getColour().equals(colour) && MoveUtil.isKingAllowedToThrowField(field[row][column], colour, field)) {
-                    temp.add(field[row][column]);
+                if (!square[row][column].getPiece().getColour().equals(colour) && MoveUtil.isKingAllowedToThrowField(square[row][column], colour, square)) {
+                    temp.add(square[row][column]);
 
                 } else
                     ;
@@ -69,13 +73,13 @@ public class Queen {
      * @param row
      * @param column
      * @param colour
-     * @param field
+     * @param square
      * @return
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
     public static ArrayList addKingMoveNotConsideringAttackedFields(int row, int column,
-                                                                    String colour, Field[][] field) throws Exception {
+                                                                    String colour, Square[][] square) throws Exception {
 
         // FieldEnsure.fieldFiller(field);
 
@@ -83,11 +87,11 @@ public class Queen {
         temp.clear();
 
         if (!(row < 0 || column < 0 || row > 7 || column > 7)) {
-            if (field[row][column].getEmpty()) {
-                temp.add(field[row][column]);
+            if (square[row][column].getEmpty()) {
+                temp.add(square[row][column]);
             } else {
-                if (!field[row][column].getFigure().getColour().equals(colour)) {
-                    temp.add(field[row][column]);
+                if (!square[row][column].getPiece().getColour().equals(colour)) {
+                    temp.add(square[row][column]);
                 } else
                     ;
             }
@@ -104,31 +108,31 @@ public class Queen {
      * @param row
      * @param column
      * @param moves
-     * @param field
+     * @param square
      * @return
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
     public static ArrayList kingMovesNotConsideringAttackedFields(int row, int column,
-                                                                  ArrayList moves, Field[][] field) throws Exception {
+                                                                  ArrayList moves, Square[][] square) throws Exception {
 
-        String colour = field[row][column].getFigure().getColour();
+        String colour = square[row][column].getPiece().getColour();
 
-        moves.addAll(addKingMoveNotConsideringAttackedFields(row + 1, column, colour, field));
+        moves.addAll(addKingMoveNotConsideringAttackedFields(row + 1, column, colour, square));
 
-        moves.addAll(addKingMoveNotConsideringAttackedFields(row + 1, column + 1, colour, field));
+        moves.addAll(addKingMoveNotConsideringAttackedFields(row + 1, column + 1, colour, square));
 
-        moves.addAll(addKingMoveNotConsideringAttackedFields(row - 1, column, colour, field));
+        moves.addAll(addKingMoveNotConsideringAttackedFields(row - 1, column, colour, square));
 
-        moves.addAll(addKingMoveNotConsideringAttackedFields(row - 1, column + 1, colour, field));
+        moves.addAll(addKingMoveNotConsideringAttackedFields(row - 1, column + 1, colour, square));
 
-        moves.addAll(addKingMoveNotConsideringAttackedFields(row, column - 1, colour, field));
+        moves.addAll(addKingMoveNotConsideringAttackedFields(row, column - 1, colour, square));
 
-        moves.addAll(addKingMoveNotConsideringAttackedFields(row + 1, column - 1, colour, field));
+        moves.addAll(addKingMoveNotConsideringAttackedFields(row + 1, column - 1, colour, square));
 
-        moves.addAll(addKingMoveNotConsideringAttackedFields(row, column + 1, colour, field));
+        moves.addAll(addKingMoveNotConsideringAttackedFields(row, column + 1, colour, square));
 
-        moves.addAll(addKingMoveNotConsideringAttackedFields(row - 1, column - 1, colour, field));/**/
+        moves.addAll(addKingMoveNotConsideringAttackedFields(row - 1, column - 1, colour, square));/**/
 
         return moves;
 
@@ -140,41 +144,76 @@ public class Queen {
      * @param row
      * @param column
      * @param moves
-     * @param field
+     * @param square
      * @return
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
     public static ArrayList kingMovesConsideringAttackedFields(int row, int column, ArrayList moves,
-                                                               Field[][] field) throws Exception {
+                                                               Square[][] square) throws Exception {
 
-        String colour = field[row][column].getFigure().getColour();
+        String colour = square[row][column].getPiece().getColour();
 
         moves.addAll(addKingMoveConsideringAttackedFields(row + 1, column,
-                colour, field));
+                colour, square));
 
         moves.addAll(addKingMoveConsideringAttackedFields(row + 1, column + 1,
-                colour, field));
+                colour, square));
 
         moves.addAll(addKingMoveConsideringAttackedFields(row - 1, column,
-                colour, field));
+                colour, square));
 
         moves.addAll(addKingMoveConsideringAttackedFields(row - 1, column + 1,
-                colour, field));
+                colour, square));
 
         moves.addAll(addKingMoveConsideringAttackedFields(row, column - 1,
-                colour, field));
+                colour, square));
 
         moves.addAll(addKingMoveConsideringAttackedFields(row + 1, column - 1,
-                colour, field));
+                colour, square));
 
         moves.addAll(addKingMoveConsideringAttackedFields(row, column + 1,
-                colour, field));
+                colour, square));
 
         moves.addAll(addKingMoveConsideringAttackedFields(row - 1, column - 1,
-                colour, field));/**/
+                colour, square));/**/
 
         return moves;
 
     }
+
+  @Override
+  String getTextualRepresentation() {
+    return null;
+  }
+
+  @Override
+  public boolean getHasBeenMoved() {
+    return false;
+  }
+
+  @Override
+  public void setHasBeenMoved(boolean hasBeenMoved) {
+
+  }
+
+  @Override
+  public String getType() {
+    return null;
+  }
+
+  @Override
+  public void setType(String type) {
+
+  }
+
+  @Override
+  public String getColour() {
+    return null;
+  }
+
+  @Override
+  public void setColour(String colour) {
+
+  }
 }
