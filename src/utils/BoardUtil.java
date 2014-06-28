@@ -67,7 +67,7 @@ public class BoardUtil {
         int columnDistance;
         ArrayList fields = new ArrayList();
         rowDistance = rowBishopField - rowKingField;
-        Square[][] squareArray = field.getFieldArray();
+        Square[][] squareArray = field.getSquares();
         columnDistance = columnBishopField - columnKingField;
 
         if (Math.abs(rowDistance) == Math.abs(columnDistance)) {
@@ -134,7 +134,7 @@ public class BoardUtil {
         int columnDistance;
         ArrayList fields = new ArrayList();
         rowDistance = rowQueenField - rowKingField;
-        Square[][] squareArray = field.getFieldArray();
+        Square[][] squareArray = field.getSquares();
         columnDistance = columnQueenField - columnKingField;
 
         if (Math.abs(rowDistance) == Math.abs(columnDistance)) {
@@ -232,7 +232,7 @@ public class BoardUtil {
         ArrayList fields = new ArrayList();
         rowDistance = rowRookField - rowKingField;
         columnDistance = colummRookField - columnKingField;
-        Square[][] squareArray = field.getFieldArray();
+        Square[][] squareArray = field.getSquares();
 
         if (rowDistance < 0 && columnDistance == 0) {
             for (int i = 0; i - 1 > rowDistance; i--) {
@@ -278,7 +278,7 @@ public class BoardUtil {
      */
     public static Square getKingFieldByColour(String colour, Board field)
             throws Exception {
-        Square[][] squareArray = field.getFieldArray();
+        Square[][] squareArray = field.getSquares();
         Square buffer = null;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {

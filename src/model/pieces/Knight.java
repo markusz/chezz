@@ -46,7 +46,7 @@ public class Knight extends AbstractPiece{
         ArrayList temp = new ArrayList();
 
         if (!(row < 0 || column < 0 || row > 7 || column > 7))
-            if (square[row][column].getEmpty()) {
+            if (square[row][column].isEmpty()) {
                 temp.add(square[row][column]);
             } else {
                 if (!square[row][column].getPiece().getColour().equals(colour) && !square[row][column].getPiece().getType().equals("king")) {
@@ -95,7 +95,7 @@ public class Knight extends AbstractPiece{
         ArrayList temp = new ArrayList();
 
         if (!(row < 0 || column < 0 || row > 7 || column > 7))
-            if (square[row][column].getEmpty()) {
+            if (square[row][column].isEmpty()) {
                 temp.add(square[row][column]);
             } else {
                 if (!square[row][column].getPiece().getColour().equals(colour)) {
@@ -158,7 +158,7 @@ public class Knight extends AbstractPiece{
   }
 
   @Override
-  public boolean getHasBeenMoved() {
+  public boolean hasBeenMoved() {
     return false;
   }
 

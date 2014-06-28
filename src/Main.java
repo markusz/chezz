@@ -132,7 +132,7 @@ public class Main {
    * -------------------------------------------------------------------
    *
    *
-   * # .moveFigure(vonFeld, nachFeld) - Macht einen Zug von einem Feld zum
+   * # .movePiece(vonFeld, nachFeld) - Macht einen Zug von einem Feld zum
    * anderen.
    * --------------------------------------------------------------------
    * # .moveRandom()/.moveRandom(int count) - macht zuf�llige Z�ge bis nur
@@ -159,10 +159,10 @@ public class Main {
    * .printListOfThreatenedFieldsByColour("black");
    * .printIsCheck("white"); .printIsCheck("black"); .printPlayingField();
    * --------------------------------------------------------------------
-   * # .addFigure(feld, art, farbe) - F�gt eine die eingegebene Figur auf
+   * # .setPiece(feld, art, farbe) - F�gt eine die eingegebene Figur auf
    * das gegebene Feld ein. FieldManipulationAllowed muss true sein
    * --------------------------------------------------------------------
-   * # .removeFigure(feld, art, farbe) - analog zu addFigure
+   * # .removeFigure(feld, art, farbe) - analog zu setPiece
    * --------------------------------------------------------------------
    * # .setFieldManipulationForbidden(Bool) - Erlaubt (false) bzw.
    * Unterbindet (true) das manuelle Hinzuf�gen oder Entfernen von Figuren

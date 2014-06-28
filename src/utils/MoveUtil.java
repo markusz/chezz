@@ -1,7 +1,7 @@
 package utils;
 
+import logic.Moves;
 import model.Move;
-import chess_game.PossibleMoves;
 import model.Board;
 import model.Square;
 import model.pieces.Piece;
@@ -10,17 +10,15 @@ import java.util.ArrayList;
 
 public class MoveUtil {
 
-    public static boolean ValidMoveByMovementRules(int startRow,
-                                                   int startColumn, int destinationRow, int destinationColumn,
-                                                   Board playField) throws Exception {
-        Square[][] square = playField.getFieldArray();
-        Square startingSquare = square[startRow][startColumn];
-        Square destinationSquare = square[destinationRow][destinationColumn];
-        String colour = startingSquare.getPiece().getColour();
-        String startingFieldString = startingSquare.getCharRow() + ""
-                + startingSquare.getIntColumn();
-        String destinationFieldString = destinationSquare.getCharRow() + ""
-                + destinationSquare.getIntColumn();
+    public static boolean isValidMove(Square from, Square to,
+                                      Board playField) throws Exception {
+        Square[][] square = playField.getSquares();
+
+        String colour = from.getPiece().getColour();
+        String startingFieldString = from.getCharRow() + ""
+                + from.getIntColumn();
+        String destinationFieldString = to.getCharRow() + ""
+                + to.getIntColumn();
         boolean allowed = false;
 
         if (GameUtil.isGivenColourCheck(colour, square)) {
@@ -31,9 +29,8 @@ public class MoveUtil {
             else
                 ;
         } else {
-            if (PossibleMoves.listOfActuallyAllowedMoves(startRow,
-                    startColumn, square).contains(
-                    square[destinationRow][destinationColumn]))
+            if (Moves.listOfActuallyAllowedMoves(startRow, startColumn, square)
+                    .contains(square[destinationRow][destinationColumn]))
                 allowed = true;
         }
 
@@ -51,7 +48,7 @@ public class MoveUtil {
         int[] destinationFieldHelp = ChessNotationUtil
                 .convertFieldNameToIndexes(destinationField);
 
-        Square[][] squareArray = field.getFieldArray();
+        Square[][] squareArray = field.getSquares();
         Square startSquare = squareArray[startingFieldHelp[0]][startingFieldHelp[1]];
         Square destinationField_Square = squareArray[destinationFieldHelp[0]][destinationFieldHelp[1]];
         String colour = startSquare.getPiece().getColour();
@@ -84,15 +81,15 @@ public class MoveUtil {
     public static ArrayList moveArrayByColour(Board field, String colour)
             throws Exception {
 
-        Square[][] squareArray = field.getFieldArray();
+        Square[][] squareArray = field.getSquares();
         ArrayList moveArrayList = new ArrayList();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (!(squareArray[i][j].getEmpty()))
+                if (!(squareArray[i][j].isEmpty()))
                     if (squareArray[i][j].getPiece().getColour().equals(colour))
                         for (int l = 0; l < 8; l++) {
                             for (int m = 0; m < 8; m++) {
-                                if (PossibleMoves.listOfActuallyAllowedMoves(i, j, squareArray)
+                                if (Moves.listOfActuallyAllowedMoves(i, j, squareArray)
                                         .contains(squareArray[l][m]))
                                     moveArrayList
                                             .add(new Move(squareArray[i][j],
@@ -118,15 +115,15 @@ public class MoveUtil {
     public static ArrayList moveArrayByColourOfFiguresGivingCheck(Board field, String colour)
             throws Exception {
 
-        Square[][] squareArray = field.getFieldArray();
+        Square[][] squareArray = field.getSquares();
         ArrayList moveArrayList = new ArrayList();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (!(squareArray[i][j].getEmpty()))
+                if (!(squareArray[i][j].isEmpty()))
                     if (squareArray[i][j].getPiece().getColour().equals(colour))
                         for (int l = 0; l < 8; l++) {
                             for (int m = 0; m < 8; m++) {
-                                if (PossibleMoves.listOfFieldsOnWhichAnEnemyKingIsCheck(i, j, squareArray)
+                                if (Moves.listOfFieldsOnWhichAnEnemyKingIsCheck(i, j, squareArray)
                                         .contains(squareArray[l][m]))
                                     moveArrayList
                                             .add(new Move(squareArray[i][j],
@@ -152,10 +149,10 @@ public class MoveUtil {
                 if (square[i][j].getPiece() == null) {
                     ;
                 } else if (square[i][j].getPiece().getColour().equals(colour)) {
-                    for (int counter = 0; counter < PossibleMoves.listOfActuallyAllowedMoves(i, j, square).size(); counter++) {
-                        if (!(moves.contains((PossibleMoves.listOfActuallyAllowedMoves(i, j,
+                    for (int counter = 0; counter < Moves.listOfActuallyAllowedMoves(i, j, square).size(); counter++) {
+                        if (!(moves.contains((Moves.listOfActuallyAllowedMoves(i, j,
                                 square).get(counter)))))
-                            moves.add((PossibleMoves.listOfActuallyAllowedMoves(i, j, square)
+                            moves.add((Moves.listOfActuallyAllowedMoves(i, j, square)
                                     .get(counter)));
                         else
                             ;
@@ -181,10 +178,10 @@ public class MoveUtil {
                     ;
                 } else if (square[i][j].getPiece().getColour().equals(colour)) {
                     // 9.4 listOfMovesIgnoreKingHelpClass -> listOfActuallyAllowedMoves
-                    for (int counter = 0; counter < PossibleMoves.listOfActuallyAllowedMoves(i, j, square).size(); counter++) {
-                        if (!(moves.contains((PossibleMoves.listOfActuallyAllowedMoves(i, j,
+                    for (int counter = 0; counter < Moves.listOfActuallyAllowedMoves(i, j, square).size(); counter++) {
+                        if (!(moves.contains((Moves.listOfActuallyAllowedMoves(i, j,
                                 square).get(counter)))))
-                            moves.add((PossibleMoves.listOfActuallyAllowedMoves(i, j, square)
+                            moves.add((Moves.listOfActuallyAllowedMoves(i, j, square)
                                     .get(counter)));
                         else
                             ;
@@ -217,12 +214,12 @@ public class MoveUtil {
         for (int i = 0; i < 8; i++) {
 
             for (int j = 0; j < 8; j++) {
-                if (square[i][j].getEmpty()) {
+                if (square[i][j].isEmpty()) {
                     ;
                 } else if (square[i][j].getPiece().getColour().equals(colour)) {
-                    for (int counter = 0; counter < PossibleMoves.listOfMovesConsideringAllThreatendFields(i, j, square).size(); counter++) {
-                        if (!(moves.contains((PossibleMoves.listOfMovesConsideringAllThreatendFields(i, j, square).get(counter)))))
-                            moves.add((PossibleMoves.listOfMovesConsideringAllThreatendFields(i, j, square).get(counter)));
+                    for (int counter = 0; counter < Moves.listOfMovesConsideringAllThreatendFields(i, j, square).size(); counter++) {
+                        if (!(moves.contains((Moves.listOfMovesConsideringAllThreatendFields(i, j, square).get(counter)))))
+                            moves.add((Moves.listOfMovesConsideringAllThreatendFields(i, j, square).get(counter)));
                         else
                             ;
                     }
@@ -243,13 +240,13 @@ public class MoveUtil {
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (square[i][j].getEmpty()) {
+                if (square[i][j].isEmpty()) {
                     ;
                 } else if (square[i][j].getPiece().getColour().equals(colour)) {
-                    for (int counter = 0; counter < PossibleMoves.listOfFieldsOnWhichAnEnemyKingIsCheck(i, j, square).size(); counter++) {
-                        if (!(moves.contains((PossibleMoves.listOfFieldsOnWhichAnEnemyKingIsCheck(i, j,
+                    for (int counter = 0; counter < Moves.listOfFieldsOnWhichAnEnemyKingIsCheck(i, j, square).size(); counter++) {
+                        if (!(moves.contains((Moves.listOfFieldsOnWhichAnEnemyKingIsCheck(i, j,
                                 square).get(counter)))))
-                            moves.add((PossibleMoves.listOfFieldsOnWhichAnEnemyKingIsCheck(i, j, square)
+                            moves.add((Moves.listOfFieldsOnWhichAnEnemyKingIsCheck(i, j, square)
                                     .get(counter)));
                         else
                             ;
@@ -297,7 +294,7 @@ public class MoveUtil {
         int row = squareKing.getRowIndex();
         int column = squareKing.getColumnIndex();
         ArrayList movesToFlee = new ArrayList();
-        ArrayList fieldsToMove = PossibleMoves.listOfActuallyAllowedMoves(row, column, field.getFieldArray());
+        ArrayList fieldsToMove = Moves.listOfActuallyAllowedMoves(row, column, field.getSquares());
 
         for (int i = 0; i < fieldsToMove.size(); i++) {
             movesToFlee.add(new Move(squareKing, (Square) fieldsToMove.get(i)));
@@ -341,7 +338,7 @@ public class MoveUtil {
     public static boolean allowedToThrowAttacker(String colour, Square square,
                                                  Board playingField) throws Exception {
         ArrayList movesAllowed = threatendFieldsByActuallyAllowedMoves(colour, playingField
-                        .getFieldArray());
+                        .getSquares());
 
         return movesAllowed.contains(square);
     }

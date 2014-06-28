@@ -1,5 +1,6 @@
 package chess_game;
 
+import logic.Moves;
 import model.Board;
 import model.Square;
 import utils.ChessNotationUtil;
@@ -51,35 +52,35 @@ public class PrintPlayingField {
             System.out.println("	   |-------------------------------|");
             System.out.print("  	" + (8 - i) + "  |");
             for (int j = 0; j < 8; j++) {
-                if (field.getFieldArray()[j][i].getEmpty())
+                if (field.getSquares()[j][i].isEmpty())
                     System.out.print(emptyField);
-                else if (field.getFieldArray()[j][i].getPiece().getType().equals("king"))
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                else if (field.getSquares()[j][i].getPiece().getType().equals("king"))
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(king);
                     else
                         System.out.print(kingBlack);
-                else if (field.getFieldArray()[j][i].getPiece().getType().equals("queen"))
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                else if (field.getSquares()[j][i].getPiece().getType().equals("queen"))
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(queen);
                     else
                         System.out.print(queenBlack);
-                else if (field.getFieldArray()[j][i].getPiece().getType().equals("knight"))
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                else if (field.getSquares()[j][i].getPiece().getType().equals("knight"))
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(knight);
                     else
                         System.out.print(knightBlack);
-                else if (field.getFieldArray()[j][i].getPiece().getType().equals("rook"))
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                else if (field.getSquares()[j][i].getPiece().getType().equals("rook"))
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(rook);
                     else
                         System.out.print(rookBlack);
-                else if (field.getFieldArray()[j][i].getPiece().getType().equals("bishop"))
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                else if (field.getSquares()[j][i].getPiece().getType().equals("bishop"))
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(bishop);
                     else
                         System.out.print(bishopBlack);
-                else if (field.getFieldArray()[j][i].getPiece().getType().equals("pawn"))
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                else if (field.getSquares()[j][i].getPiece().getType().equals("pawn"))
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(pawn);
                     else
                         System.out.print(pawnBlack);
@@ -106,35 +107,35 @@ public class PrintPlayingField {
 
             //System.out.println(rep);
             for (int j = 0; j < 8; j++) {
-                if (field.getFieldArray()[j][i].getEmpty())
+                if (field.getSquares()[j][i].isEmpty())
                     rep = (rep + "    " + emptyField);
-                else if (field.getFieldArray()[j][i].getPiece().getType().equals("king"))
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                else if (field.getSquares()[j][i].getPiece().getType().equals("king"))
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         rep = (rep + "  " + kingString);
                     else
                         rep = (rep + "  " + kingBlackString);
-                else if (field.getFieldArray()[j][i].getPiece().getType().equals("queen"))
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                else if (field.getSquares()[j][i].getPiece().getType().equals("queen"))
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         rep = (rep + "  " + queenString);
                     else
                         rep = (rep + "  " + queenBlackString);
-                else if (field.getFieldArray()[j][i].getPiece().getType().equals("knight"))
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                else if (field.getSquares()[j][i].getPiece().getType().equals("knight"))
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         rep = (rep + "  " + knightString);
                     else
                         rep = (rep + "  " + knightBlackString);
-                else if (field.getFieldArray()[j][i].getPiece().getType().equals("rook"))
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                else if (field.getSquares()[j][i].getPiece().getType().equals("rook"))
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         rep = (rep + "  " + rookString);
                     else
                         rep = (rep + "  " + rookBlackString);
-                else if (field.getFieldArray()[j][i].getPiece().getType().equals("bishop"))
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                else if (field.getSquares()[j][i].getPiece().getType().equals("bishop"))
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         rep = (rep + "  " + bishopString);
                     else
                         rep = (rep + "  " + bishopBlackString);
-                else if (field.getFieldArray()[j][i].getPiece().getType().equals("pawn"))
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                else if (field.getSquares()[j][i].getPiece().getType().equals("pawn"))
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         rep = (rep + "  " + pawnString);
                     else
                         rep = (rep + "  " + pawnBlackString);
@@ -160,50 +161,50 @@ public class PrintPlayingField {
         int row = fields[0];
         int column = fields[1];
 
-        ArrayList possibleFields = PossibleMoves.listOfActuallyAllowedMoves(row, column, field
-                .getFieldArray());
+        ArrayList possibleFields = Moves.listOfActuallyAllowedMoves(row, column, field
+                .getSquares());
 
         System.out.println("\n\n       	     A   B   C   D   E   F   G   H");
         for (int i = 0; i < 8; i++) {
             System.out.println("	   |-------------------------------|");
             System.out.print("  	" + (8 - i) + "  |");
             for (int j = 0; j < 8; j++) {
-                Square currentSquare = (field).getFieldArray()[j][i];
-                if ((field.getFieldArray()[j][i]).getEmpty() || possibleFields.contains(currentSquare)) {
+                Square currentSquare = (field).getSquares()[j][i];
+                if ((field.getSquares()[j][i]).isEmpty() || possibleFields.contains(currentSquare)) {
                     if (possibleFields.contains(currentSquare))
-                        if ((field.getFieldArray()[j][i]).getEmpty())
+                        if ((field.getSquares()[j][i]).isEmpty())
                             System.out.print(possibleField);
                         else
                             System.out.print(possibleFieldThrow);
                     else
                         System.out.print(emptyField);
-                } else if (field.getFieldArray()[j][i].getPiece().getType().equals("king")) {
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                } else if (field.getSquares()[j][i].getPiece().getType().equals("king")) {
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(king);
                     else
                         System.out.print(kingBlack);
-                } else if (field.getFieldArray()[j][i].getPiece().getType().equals("queen")) {
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                } else if (field.getSquares()[j][i].getPiece().getType().equals("queen")) {
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(queen);
                     else
                         System.out.print(queenBlack);
-                } else if (field.getFieldArray()[j][i].getPiece().getType().equals("knight")) {
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                } else if (field.getSquares()[j][i].getPiece().getType().equals("knight")) {
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(knight);
                     else
                         System.out.print(knightBlack);
-                } else if (field.getFieldArray()[j][i].getPiece().getType().equals("rook")) {
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                } else if (field.getSquares()[j][i].getPiece().getType().equals("rook")) {
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(rook);
                     else
                         System.out.print(rookBlack);
-                } else if (field.getFieldArray()[j][i].getPiece().getType().equals("bishop")) {
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                } else if (field.getSquares()[j][i].getPiece().getType().equals("bishop")) {
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(bishop);
                     else
                         System.out.print(bishopBlack);
-                } else if (field.getFieldArray()[j][i].getPiece().getType().equals("pawn")) {
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                } else if (field.getSquares()[j][i].getPiece().getType().equals("pawn")) {
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(pawn);
                     else
                         System.out.print(pawnBlack);
@@ -216,8 +217,8 @@ public class PrintPlayingField {
         }
         System.out.print("      	    --------------------------------\n");
         System.out.println("      	     A   B   C   D   E   F   G   H");
-        System.out.println("\n	Allowed moves for the " + field.getFieldArray()[row][column].getPiece().getColour() + " "
-                + field.getFieldArray()[row][column].getPiece().getType() + " on " + fieldOfFigure + "\n	have been marked with x\n	Fields on which an opposite figure can be \n	thrown are marked with +.\n");
+        System.out.println("\n	Allowed moves for the " + field.getSquares()[row][column].getPiece().getColour() + " "
+                + field.getSquares()[row][column].getPiece().getType() + " on " + fieldOfFigure + "\n	have been marked with x\n	Fields on which an opposite figure can be \n	thrown are marked with +.\n");
     }
 
     @SuppressWarnings("unchecked")
@@ -238,49 +239,49 @@ public class PrintPlayingField {
 
 
         // System.out.print(fields[0]);
-        ArrayList possibleFields = MoveUtil.threatendFieldsByActuallyAllowedMoves(colour, field.getFieldArray());
+        ArrayList possibleFields = MoveUtil.threatendFieldsByActuallyAllowedMoves(colour, field.getSquares());
         // System.out.println(possibleFields);
         System.out.println("\n\n       	     A   B   C   D   E   F   G   H");
         for (int i = 0; i < 8; i++) {
             System.out.println("	   |-------------------------------|");
             System.out.print("  	" + (8 - i) + "  |");
             for (int j = 0; j < 8; j++) {
-                Square currentSquare = (field).getFieldArray()[j][i];
-                if ((field.getFieldArray()[j][i]).getEmpty() || possibleFields.contains(currentSquare)) {
+                Square currentSquare = (field).getSquares()[j][i];
+                if ((field.getSquares()[j][i]).isEmpty() || possibleFields.contains(currentSquare)) {
                     if (possibleFields.contains(currentSquare))
-                        if ((field.getFieldArray()[j][i]).getEmpty())
+                        if ((field.getSquares()[j][i]).isEmpty())
                             System.out.print(possibleField);
                         else
                             System.out.print(possibleFieldThrow);
                     else
                         System.out.print(emptyField);
-                } else if (field.getFieldArray()[j][i].getPiece().getType().equals("king")) {
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                } else if (field.getSquares()[j][i].getPiece().getType().equals("king")) {
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(king);
                     else
                         System.out.print(kingBlack);
-                } else if (field.getFieldArray()[j][i].getPiece().getType().equals("queen")) {
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                } else if (field.getSquares()[j][i].getPiece().getType().equals("queen")) {
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(queen);
                     else
                         System.out.print(queenBlack);
-                } else if (field.getFieldArray()[j][i].getPiece().getType().equals("knight")) {
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                } else if (field.getSquares()[j][i].getPiece().getType().equals("knight")) {
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(knight);
                     else
                         System.out.print(knightBlack);
-                } else if (field.getFieldArray()[j][i].getPiece().getType().equals("rook")) {
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                } else if (field.getSquares()[j][i].getPiece().getType().equals("rook")) {
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(rook);
                     else
                         System.out.print(rookBlack);
-                } else if (field.getFieldArray()[j][i].getPiece().getType().equals("bishop")) {
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                } else if (field.getSquares()[j][i].getPiece().getType().equals("bishop")) {
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(bishop);
                     else
                         System.out.print(bishopBlack);
-                } else if (field.getFieldArray()[j][i].getPiece().getType().equals("pawn")) {
-                    if (field.getFieldArray()[j][i].getPiece().getColour().equals("white"))
+                } else if (field.getSquares()[j][i].getPiece().getType().equals("pawn")) {
+                    if (field.getSquares()[j][i].getPiece().getColour().equals("white"))
                         System.out.print(pawn);
                     else
                         System.out.print(pawnBlack);

@@ -37,7 +37,7 @@ public class Bishop extends AbstractPiece{
         String colour = square[row][column].getPiece().getColour();
 
         while (row + 1 < 8 && column - 1 > -1) {
-            if (square[row + 1][column - 1].getEmpty()) {
+            if (square[row + 1][column - 1].isEmpty()) {
                 moves.add(square[row + 1][column - 1]);
                 row++;
                 column--;
@@ -56,7 +56,7 @@ public class Bishop extends AbstractPiece{
         column = puffer_column;
 
         while (row + 1 < 8 && column + 1 < 8) {
-            if (square[row + 1][column + 1].getEmpty()) {
+            if (square[row + 1][column + 1].isEmpty()) {
                 moves.add(square[row + 1][column + 1]);
                 row++;
                 column++;
@@ -74,7 +74,7 @@ public class Bishop extends AbstractPiece{
         column = puffer_column;
 
         while (row - 1 > -1 && column + 1 < 8) {
-            if (square[row - 1][column + 1].getEmpty()) {
+            if (square[row - 1][column + 1].isEmpty()) {
                 moves.add(square[row - 1][column + 1]);
                 row--;
                 column++;
@@ -92,7 +92,7 @@ public class Bishop extends AbstractPiece{
         row = puffer_row;
 
         while (row - 1 > -1 && column - 1 > -1) {
-            if (square[row - 1][column - 1].getEmpty()) {
+            if (square[row - 1][column - 1].isEmpty()) {
                 moves.add(square[row - 1][column - 1]);
                 row--;
                 column--;
@@ -140,7 +140,7 @@ public class Bishop extends AbstractPiece{
         String colour = square[row][column].getPiece().getColour();
 
         while (row + 1 < 8 && column - 1 > -1) {
-            if (square[row + 1][column - 1].getEmpty()) {
+            if (square[row + 1][column - 1].isEmpty()) {
                 moves.add(square[row + 1][column - 1]);
                 row++;
                 column--;
@@ -157,7 +157,7 @@ public class Bishop extends AbstractPiece{
         column = puffer_column;
 
         while (row + 1 < 8 && column + 1 < 8) {
-            if (square[row + 1][column + 1].getEmpty()) {
+            if (square[row + 1][column + 1].isEmpty()) {
                 moves.add(square[row + 1][column + 1]);
                 row++;
                 column++;
@@ -174,7 +174,7 @@ public class Bishop extends AbstractPiece{
         column = puffer_column;
 
         while (row - 1 > -1 && column + 1 < 8) {
-            if (square[row - 1][column + 1].getEmpty()) {
+            if (square[row - 1][column + 1].isEmpty()) {
                 moves.add(square[row - 1][column + 1]);
                 row--;
                 column++;
@@ -191,7 +191,7 @@ public class Bishop extends AbstractPiece{
         row = puffer_row;
 
         while (row - 1 > -1 && column - 1 > -1) {
-            if (square[row - 1][column - 1].getEmpty()) {
+            if (square[row - 1][column - 1].isEmpty()) {
                 moves.add(square[row - 1][column - 1]);
                 row--;
                 column--;
@@ -232,7 +232,7 @@ public class Bishop extends AbstractPiece{
         String colour = square[row][column].getPiece().getColour();
 
 		/*while (row + 1 < 8 && column - 1 > -1) {
-            if (field[row + 1][column - 1].getEmpty()) {
+            if (field[row + 1][column - 1].isEmpty()) {
 				moves.add(field[row + 1][column - 1]);
 				row++;
 				column--;
@@ -254,7 +254,7 @@ public class Bishop extends AbstractPiece{
 		}*/
 
         while (row + 1 < 8 && column - 1 > -1) {
-            if (square[row + 1][column - 1].getEmpty()) {
+            if (square[row + 1][column - 1].isEmpty()) {
                 moves.add(square[row + 1][column - 1]);
                 row++;
                 column--;
@@ -279,7 +279,7 @@ public class Bishop extends AbstractPiece{
         column = puffer_column;
 
 		/*while (row + 1 < 8 && column + 1 < 8) {
-            if (field[row + 1][column + 1].getEmpty()) {
+            if (field[row + 1][column + 1].isEmpty()) {
 				moves.add(field[row + 1][column + 1]);
 				row++;
 				column++;
@@ -299,7 +299,7 @@ public class Bishop extends AbstractPiece{
 		}*/
 
         while (row + 1 < 8 && column + 1 < 8) {
-            if (square[row + 1][column + 1].getEmpty()) {
+            if (square[row + 1][column + 1].isEmpty()) {
                 moves.add(square[row + 1][column + 1]);
                 row++;
                 column++;
@@ -324,7 +324,7 @@ public class Bishop extends AbstractPiece{
         column = puffer_column;
 
 		/*while (row - 1 > -1 && column + 1 < 8) {
-			if (field[row - 1][column + 1].getEmpty()) {
+			if (field[row - 1][column + 1].isEmpty()) {
 				moves.add(field[row - 1][column + 1]);
 				row--;
 				column++;
@@ -344,7 +344,7 @@ public class Bishop extends AbstractPiece{
 		}*/
 
         while (row - 1 > -1 && column + 1 < 8) {
-            if (square[row - 1][column + 1].getEmpty()) {
+            if (square[row - 1][column + 1].isEmpty()) {
                 moves.add(square[row - 1][column + 1]);
                 row--;
                 column++;
@@ -369,7 +369,7 @@ public class Bishop extends AbstractPiece{
         row = puffer_row;
 
 		/*while (row - 1 > -1 && column - 1 > -1) {
-			if (field[row - 1][column - 1].getEmpty()) {
+			if (field[row - 1][column - 1].isEmpty()) {
 				moves.add(field[row - 1][column - 1]);
 				row--;
 				column--;
@@ -390,7 +390,7 @@ public class Bishop extends AbstractPiece{
 		}*/
 
         while (row - 1 > -1 && column - 1 > -1) {
-            if (square[row - 1][column - 1].getEmpty()) {
+            if (square[row - 1][column - 1].isEmpty()) {
                 moves.add(square[row - 1][column - 1]);
                 row--;
                 column--;
@@ -424,7 +424,7 @@ public class Bishop extends AbstractPiece{
   }
 
   @Override
-  public boolean getHasBeenMoved() {
+  public boolean hasBeenMoved() {
     return false;
   }
 

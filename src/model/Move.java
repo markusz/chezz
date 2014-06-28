@@ -2,29 +2,34 @@ package model;
 
 public class Move {
 
-    private Square startSquare;
-    private Square destinationSquare;
+  public static int CASTLING_WHITE_KINGSIDE = 1;
+  public static int CASTLING_WHITE_QUEENSIDE = 2;
+  public static int CASTLING_BLACK_KINGSIDE = 3;
+  public static int CASTLING_BLACK_QUEENSIDE = 4;
 
-    public Move(Square startSquare, Square destinationSquare) {
-        this.startSquare = startSquare;
-        this.destinationSquare = destinationSquare;
+  private Square startSquare;
+  private Square destinationSquare;
 
-    }
+  public Move(Square startSquare, Square destinationSquare) {
+    this.startSquare = startSquare;
+    this.destinationSquare = destinationSquare;
 
-    public Square getDestinationSquare() {
-        return this.destinationSquare;
-    }
+  }
 
-    public void setDestinationSquare(Square destinationSquare) {
-        this.destinationSquare = destinationSquare;
-    }
+  public Square getDestinationSquare() {
+    return this.destinationSquare;
+  }
 
-    public Square getStartSquare() {
-        return this.startSquare;
-    }
+  public void setDestinationSquare(Square destinationSquare) {
+    this.destinationSquare = destinationSquare;
+  }
 
-    public void setStartSquare(Square startSquare) {
-        this.startSquare = startSquare;
-    }
+  public Square getStartSquare() {
+    return this.startSquare;
+  }
+
+  public void setStartSquare(Square startSquare) {
+    this.startSquare = startSquare;
+  }
 
 }

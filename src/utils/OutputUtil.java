@@ -99,7 +99,7 @@ public class OutputUtil {
                             + colour + ":\n");
             for (int i = 0; i < temp.size(); i++) {
                 Square current = (Square) temp.get(i);
-                if (!current.getEmpty())
+                if (!current.isEmpty())
                     System.out.println("	" + current.getCharRow() + ""
                             + current.getIntColumn());
             }

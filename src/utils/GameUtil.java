@@ -1,6 +1,6 @@
 package utils;
 
-import chess_game.PossibleMoves;
+import logic.Moves;
 import model.Board;
 import model.Square;
 import model.Move;
@@ -27,8 +27,8 @@ public class GameUtil {
         int row = kingSquare.getRowIndex();
         int column = kingSquare.getColumnIndex();
 
-        if ((PossibleMoves.listOfActuallyAllowedMoves(row, column, field
-                .getFieldArray()).isEmpty())) {
+        if ((Moves.listOfActuallyAllowedMoves(row, column, field
+                .getSquares()).isEmpty())) {
             if (figuresGivingCheckToColour(colour, field).size() > 1) {
                 checkMate = true;
             } else {
@@ -81,7 +81,7 @@ public class GameUtil {
             colourOpposite = "black";
 
         if (MoveUtil.threatenedFieldsOnWhichAnEnemyKingIsCheck(
-                colourOpposite, field.getFieldArray()).contains(
+                colourOpposite, field.getSquares()).contains(
                 BoardUtil.getKingFieldByColour(colour, field)))
             return true;
         else
@@ -105,7 +105,7 @@ public class GameUtil {
 
         BoardUtil.fieldFiller(square);
         if (square[row_king][column_king].getPiece() != null)
-            return ((PossibleMoves.listOfMovesConsideringAllThreatendFields(
+            return ((Moves.listOfMovesConsideringAllThreatendFields(
                     row_figure, column_figure, square))
                     .contains(square[row_king][column_king]))
                     && (!(square[row_figure][column_figure]).getPiece()

@@ -88,7 +88,7 @@ public class GUI extends JFrame {
     public void createRandomSituation() throws Exception {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                test.getBoard().getFieldArray()[i][j].setEmpty();
+                test.getBoard().getSquares()[i][j].setEmpty();
             }
         }
         test.createRandomSituation();
@@ -100,7 +100,7 @@ public class GUI extends JFrame {
     public void createStartingLineup() throws Exception {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                test.getBoard().getFieldArray()[i][j].setEmpty();
+                test.getBoard().getSquares()[i][j].setEmpty();
             }
         }
         test.getBoard().createInitialLineup();
@@ -132,7 +132,7 @@ public class GUI extends JFrame {
                             }
                             if (!startFieldClicked) {
                                 // if(test.getTurn() ==
-                                // test.getBoard().getFieldArray()[current][current2].getPiece().getColour()){
+                                // test.getBoard().getSquare()[current][current2].getPiece().getColour()){
                                 textfieldStartingField.setText(ChessNotationUtil
                                         .convertFieldIndexToChessNotation(current, current2));
                                 if (markAllowedFields.isSelected()) {
@@ -222,10 +222,10 @@ public class GUI extends JFrame {
             for (int j = 0; j < 8; j++) {
                 int[] intField = ChessNotationUtil
                         .convertFieldNameToIndexes(textfieldStartingField.getText());
-                Square currentSquare = test.getBoard().getFieldArray()[intField[0]][intField[1]];
+                Square currentSquare = test.getBoard().getSquares()[intField[0]][intField[1]];
 
-                if (!currentSquare.getEmpty())
-                    if (MoveUtil.ValidMoveByMovementRules(intField[0],
+                if (!currentSquare.isEmpty())
+                    if (MoveUtil.isValidMove(intField[0],
                             intField[1], i, j, test.getBoard())) {
                         buttonArray[i][j].setBorder(new MatteBorder(30, 30, 30, 30,
                                 new Color(255, 80, 90, 120)));
@@ -300,8 +300,8 @@ public class GUI extends JFrame {
         ImageIcon temp = null;
         String colourFigure = null;
         String typeFigure = null;
-        Square current = test.getBoard().getFieldArray()[i][j];
-        if (!current.getEmpty()) {
+        Square current = test.getBoard().getSquares()[i][j];
+        if (!current.isEmpty()) {
             colourFigure = current.getPiece().getColour();
             typeFigure = current.getPiece().getType();
         }
@@ -309,7 +309,7 @@ public class GUI extends JFrame {
         if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0)) { // helles
             // feld
             if (colourFigure.equals("white")) {
-                if (current.getEmpty())
+                if (current.isEmpty())
                     temp = emptyLight;
                 else if (typeFigure.equals("queen"))
                     temp = whiteQueenLightField;
@@ -324,7 +324,7 @@ public class GUI extends JFrame {
                 else if (typeFigure.equals("pawn"))
                     temp = whitePawnLightField;
             } else {
-                if (current.getEmpty())
+                if (current.isEmpty())
                     temp = emptyLight;
                 else if (typeFigure.equals("queen"))
                     temp = blackQueenLightField;
@@ -342,7 +342,7 @@ public class GUI extends JFrame {
 
         } else {
             if (colourFigure.equals("white")) {
-                if (current.getEmpty())
+                if (current.isEmpty())
                     temp = emptyDark;
                 else if (typeFigure.equals("queen"))
                     temp = whiteQueenDarkField;
@@ -357,7 +357,7 @@ public class GUI extends JFrame {
                 else if (typeFigure.equals("pawn"))
                     temp = whitePawnDarkField;
             } else {
-                if (current.getEmpty())
+                if (current.isEmpty())
                     temp = emptyDark;
                 else if (typeFigure.equals("queen"))
                     temp = blackQueenDarkField;
@@ -679,28 +679,28 @@ public class GUI extends JFrame {
 			String[] moves = test.randomMove();
 			int[] startArray = InputUtil.convertFieldNameToIndexes(startingField);
 			int[] destinationArray = InputUtil.convertFieldNameToIndexes(destinationField);
-			//(MoveValidationUtil.ValidMoveByMovementRules(startRow, startColumn, destinationRow, destinationColumn, playField))
-			//if (!(test.getBoard().getFieldArray()[rowStart][8 - columnStart].getEmpty()) && (field.getFieldArray()[rowStart][8 - columnStart].getPiece().getColour() == turn) && (MoveValidationUtil.ValidMoveByMovementRules(startArray[0], startArray[1], destinationArray[0], destinationArray[1], field))){
-		test.moveFigure(startingField, destinationField);
+			//(MoveValidationUtil.isValidMove(startRow, startColumn, destinationRow, destinationColumn, playField))
+			//if (!(test.getBoard().getSquare()[rowStart][8 - columnStart].isEmpty()) && (field.getSquare()[rowStart][8 - columnStart].getPiece().getColour() == turn) && (MoveValidationUtil.isValidMove(startArray[0], startArray[1], destinationArray[0], destinationArray[1], field))){
+		test.movePiece(startingField, destinationField);
 		
 		//break;
 		}
 		
 		else*/
 
-        if (!(test.getBoard().getFieldArray()[start[0]][start[1]].getEmpty())) {
+        if (!(test.getBoard().getSquares()[start[0]][start[1]].isEmpty())) {
 
-            if (MoveUtil.ValidMoveByMovementRules(start[0], start[1],
+            if (MoveUtil.isValidMove(start[0], start[1],
                     destination[0], destination[1], test.getBoard())) {
-                String colour = test.getBoard().getFieldArray()[start[0]][start[1]]
+                String colour = test.getBoard().getSquares()[start[0]][start[1]]
                         .getPiece().getColour();
-                String type = test.getBoard().getFieldArray()[start[0]][start[1]]
+                String type = test.getBoard().getSquares()[start[0]][start[1]]
                         .getPiece().getType();
                 if (test.getTurn().equals(colour)) {
                     test.addToLog((startingField + " -> " + destinationField + " ("
                             + colour + " " + type + ")" + "\n"));
                 }
-                test.moveFigure(startingField, destinationField);
+                test.movePiece(startingField, destinationField);
 
                 updateInfoField();
                 fieldUpdater(buttonArray);

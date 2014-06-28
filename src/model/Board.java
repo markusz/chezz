@@ -1,16 +1,19 @@
 package model;
 
 import model.pieces.*;
+import sun.reflect.annotation.ExceptionProxy;
 import utils.ChessNotationUtil;
 import utils.MoveUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class Board {
 
 
   private int moveCounter = 0;
   private Square[][] squares;
+  private Collection<Square> iterableSqaures;
   private ArrayList<Square> attackedByWhite;
   private ArrayList<Square> attackedByBlack;
 
@@ -25,6 +28,7 @@ public class Board {
       for (int j = 0; j < 8; j++) {
         if (squares[i][j] == null)
           squares[i][j] = new Square(i, j, null);
+        iterableSqaures.add(squares[i][j]);
       }
     }
   }
@@ -46,32 +50,22 @@ public class Board {
    */
   @SuppressWarnings("unchecked")
   public void markAttackedFields() throws Exception {
-    ArrayList fieldWhite = MoveUtil.threatenedFieldsByColourConsideringEveryAttackedField("white", squares);
-    ArrayList fieldBlack = MoveUtil.threatenedFieldsByColourConsideringEveryAttackedField("black", squares);
-    for (int i = 0; i < 8; i++) {
-      for (int j = 0; j < 8; j++) {
-        if (fieldWhite.contains(squares[i][j]))
-          squares[i][j].setThreatendByWhite(true);
-        else
-          squares[i][j].setThreatendByWhite(false);
+    ArrayList fieldsThreatenedByWhite = MoveUtil.threatenedFieldsByColourConsideringEveryAttackedField("white", squares);
+    ArrayList fieldsThreatenedByBlack = MoveUtil.threatenedFieldsByColourConsideringEveryAttackedField("black", squares);
 
-        if (fieldBlack.contains(squares[i][j]))
-          squares[i][j].setThreatendByBlack(true);
-        else
-          squares[i][j].setThreatendByBlack(false);
-      }
+    for (Square square : iterableSqaures) {
+      square.setThreatendByWhite(fieldsThreatenedByWhite.contains(square));
+      square.setThreatendByBlack(fieldsThreatenedByBlack.contains(square));
     }
   }
 
 
-  public void addFigure(int row, int column, Piece piece) throws Exception {
+  public void setPiece(int row, int column, Piece piece) throws Exception {
     this.squares[row][column].setPiece(piece);
   }
 
-  public void addFigureInterface(String field, Piece piece)
-          throws Exception {
-    int[] fieldArray = ChessNotationUtil.convertFieldNameToIndexes(field);
-    this.squares[fieldArray[0]][fieldArray[1]] = new Square(fieldArray[0], fieldArray[1], piece);
+  public void setPiece(Square square, Piece piece) throws Exception {
+    square.setPiece(piece);
   }
 
   /**
@@ -84,7 +78,7 @@ public class Board {
   public void removeFigureInterface(String field)
           throws Exception {
     int[] fieldArray = ChessNotationUtil.convertFieldNameToIndexes(field);
-    if (!this.squares[fieldArray[0]][fieldArray[1]].getEmpty())
+    if (!this.squares[fieldArray[0]][fieldArray[1]].isEmpty())
       this.squares[fieldArray[0]][fieldArray[1]].setEmpty();
     else
       System.out
@@ -92,8 +86,12 @@ public class Board {
                       + field + "\n\n");
   }
 
-  public Square[][] getFieldArray() {
+  public Square[][] getSquares() {
     return this.squares;
+  }
+
+  public Square getSquare(int row, int col) {
+    return this.squares[row][col];
   }
 
   @SuppressWarnings("unchecked")
@@ -118,66 +116,56 @@ public class Board {
    */
   public void createInitialLineup() throws Exception {
 
-    addFigure(0, 1, new Pawn(Player.SECOND.getId()));
-    addFigure(1, 1, new Pawn(Player.SECOND.getId()));
-    addFigure(2, 1, new Pawn(Player.SECOND.getId()));
-    addFigure(3, 1, new Pawn(Player.SECOND.getId()));
-    addFigure(4, 1, new Pawn(Player.SECOND.getId()));
-    addFigure(5, 1, new Pawn(Player.SECOND.getId()));
-    addFigure(6, 1, new Pawn(Player.SECOND.getId()));
-    addFigure(7, 1, new Pawn(Player.SECOND.getId()));
-    addFigure(0, 0, new Rook(Player.SECOND.getId()));
-    addFigure(1, 0, new Knight(Player.SECOND.getId()));
-    addFigure(2, 0, new Bishop(Player.SECOND.getId()));
-    addFigure(3, 0, new Queen(Player.SECOND.getId()));
-    addFigure(4, 0, new King(Player.SECOND.getId()));
-    addFigure(5, 0, new Bishop(Player.SECOND.getId()));
-    addFigure(6, 0, new Knight(Player.SECOND.getId()));
-    addFigure(7, 0, new Rook(Player.SECOND.getId()));
+    setPiece(0, 1, new Pawn(Player.SECOND.getId()));
+    setPiece(1, 1, new Pawn(Player.SECOND.getId()));
+    setPiece(2, 1, new Pawn(Player.SECOND.getId()));
+    setPiece(3, 1, new Pawn(Player.SECOND.getId()));
+    setPiece(4, 1, new Pawn(Player.SECOND.getId()));
+    setPiece(5, 1, new Pawn(Player.SECOND.getId()));
+    setPiece(6, 1, new Pawn(Player.SECOND.getId()));
+    setPiece(7, 1, new Pawn(Player.SECOND.getId()));
+    setPiece(0, 0, new Rook(Player.SECOND.getId()));
+    setPiece(1, 0, new Knight(Player.SECOND.getId()));
+    setPiece(2, 0, new Bishop(Player.SECOND.getId()));
+    setPiece(3, 0, new Queen(Player.SECOND.getId()));
+    setPiece(4, 0, new King(Player.SECOND.getId()));
+    setPiece(5, 0, new Bishop(Player.SECOND.getId()));
+    setPiece(6, 0, new Knight(Player.SECOND.getId()));
+    setPiece(7, 0, new Rook(Player.SECOND.getId()));
 
 
-    addFigure(0, 6, new Pawn(Player.FIRST.getId()));
-    addFigure(1, 6, new Pawn(Player.FIRST.getId()));
-    addFigure(2, 6, new Pawn(Player.FIRST.getId()));
-    addFigure(3, 6, new Pawn(Player.FIRST.getId()));
-    addFigure(4, 6, new Pawn(Player.FIRST.getId()));
-    addFigure(5, 6, new Pawn(Player.FIRST.getId()));
-    addFigure(6, 6, new Pawn(Player.FIRST.getId()));
-    addFigure(7, 6, new Pawn(Player.FIRST.getId()));
-    addFigure(0, 7, new Rook(Player.FIRST.getId()));
-    addFigure(1, 7, new Knight(Player.FIRST.getId()));
-    addFigure(2, 7, new Bishop(Player.FIRST.getId()));
-    addFigure(3, 7, new Queen(Player.FIRST.getId()));
-    addFigure(4, 7, new King(Player.FIRST.getId()));
-    addFigure(5, 7, new Bishop(Player.FIRST.getId()));
-    addFigure(6, 7, new Knight(Player.FIRST.getId()));
-    addFigure(7, 7, new Rook(Player.SECOND.getId()));
+    setPiece(0, 6, new Pawn(Player.FIRST.getId()));
+    setPiece(1, 6, new Pawn(Player.FIRST.getId()));
+    setPiece(2, 6, new Pawn(Player.FIRST.getId()));
+    setPiece(3, 6, new Pawn(Player.FIRST.getId()));
+    setPiece(4, 6, new Pawn(Player.FIRST.getId()));
+    setPiece(5, 6, new Pawn(Player.FIRST.getId()));
+    setPiece(6, 6, new Pawn(Player.FIRST.getId()));
+    setPiece(7, 6, new Pawn(Player.FIRST.getId()));
+    setPiece(0, 7, new Rook(Player.FIRST.getId()));
+    setPiece(1, 7, new Knight(Player.FIRST.getId()));
+    setPiece(2, 7, new Bishop(Player.FIRST.getId()));
+    setPiece(3, 7, new Queen(Player.FIRST.getId()));
+    setPiece(4, 7, new King(Player.FIRST.getId()));
+    setPiece(5, 7, new Bishop(Player.FIRST.getId()));
+    setPiece(6, 7, new Knight(Player.FIRST.getId()));
+    setPiece(7, 7, new Rook(Player.SECOND.getId()));
   }
 
-  public void moveFigure(String startingField, String destinationField)
-          throws Exception {
-    int[] start = ChessNotationUtil.convertFieldNameToIndexes(startingField);
-    int[] destination = ChessNotationUtil.convertFieldNameToIndexes(destinationField);
-    if (squares[start[0]][start[1]].getEmpty()) {
-      System.out.println("	Invalid Move: " + startingField
-              + " is Empty.\n        <No changes have been made>");
-    } else if (MoveUtil.ValidMoveByMovementRules(start[0], start[1],
-            destination[0], destination[1], this)) {
-      this.addFigure(destination[0], destination[1],
-              this.squares[start[0]][start[1]].getPiece().getType(),
-              this.squares[start[0]][start[1]].getPiece().getColour());
-      this.squares[start[0]][start[1]].setEmpty();
+  public void moveFigure(Square from, Square to) throws Exception {
+
+
+    if (from.isEmpty()) {
+      throw new Exception("Invalid Move: " + from.getChessNotation()+" is Empty");
+    }
+
+    if (MoveUtil.isValidMove(from, to, this)) {
+      to.setPiece(from.getPiece());
+      from.setEmpty();
+      from.getPiece().setHasBeenMoved(true);
       increaseMovesCounter();
-      if (!this.squares[destination[0]][destination[1]].getPiece().getHasBeenMoved())
-        this.squares[destination[0]][destination[1]].getPiece().setHasBeenMoved(true);
     } else {
-      System.out.println("	Invalid Move: The "
-              + this.squares[start[0]][start[1]].getPiece().getColour()
-              + " "
-              + this.squares[start[0]][start[1]].getPiece().getType()
-              + " on " + startingField + " is not allowed to move to "
-              + destinationField);
-      System.out.println("	  <No changes have been made>");
+      throw new Exception("Invalid Move: " + from.getChessNotation() +" -> "+to.getChessNotation());
     }
   }
 }

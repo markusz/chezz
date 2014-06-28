@@ -26,7 +26,7 @@ public class Pawn extends AbstractPiece {
         ArrayList temp = new ArrayList();
 
         if (!(row < 0 || column < 0 || row > 7 || column > 7))
-            if (square[row][column].getEmpty()) {
+            if (square[row][column].isEmpty()) {
                 ;
             } else {
                 if (!square[row][column].getPiece().getColour().equals(colour) && !square[row][column].getPiece().getType().equals("king")) {
@@ -55,7 +55,7 @@ public class Pawn extends AbstractPiece {
         ArrayList temp = new ArrayList();
 
         if (!(row < 0 || column < 0 || row > 7 || column > 7))
-            if (square[row][column].getEmpty()) {
+            if (square[row][column].isEmpty()) {
                 temp.add(square[row][column]);
             }
         return temp;
@@ -101,7 +101,7 @@ public class Pawn extends AbstractPiece {
 
         if (square[row][column].getPiece().getColour().equals("white")) {
             if (column == 6) {
-                if (square[row][column - 1].getEmpty()) {
+                if (square[row][column - 1].isEmpty()) {
                     moves.addAll(addFieldIfPawnIsActuallyAllowedToMove(row, column - 2, colour, square));
                 }
 
@@ -122,7 +122,7 @@ public class Pawn extends AbstractPiece {
 
         } else if (column == 1) {
             moves.addAll(addFieldIfPawnIsActuallyAllowedToMove(row, column + 1, colour, square));
-            if (square[row][column + 1].getEmpty()) {
+            if (square[row][column + 1].isEmpty()) {
                 moves.addAll(addFieldIfPawnIsActuallyAllowedToMove(row, column + 2, colour, square));
             }
 
@@ -180,7 +180,7 @@ public class Pawn extends AbstractPiece {
   }
 
   @Override
-  public boolean getHasBeenMoved() {
+  public boolean hasBeenMoved() {
     return false;
   }
 

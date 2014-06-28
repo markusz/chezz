@@ -29,10 +29,18 @@ public class ChessNotationUtil {
   }
 
   public static String convertFieldIndexToChessNotation(int row, int column) {
-    char rowLetter = (char) (65 + row);
-    int columnNumber = 8 - column;
+    char rowLetter = convertRowIndexToChessNotation(row);
+    int columnNumber = convertColumnIndexToChessNotation(column);
 
-    return rowLetter + "" + column;
+    return rowLetter + "" + columnNumber;
+  }
+
+  public static char convertRowIndexToChessNotation(int row){
+    return (char) (65 + row);
+  }
+
+  public static int convertColumnIndexToChessNotation(int column){
+    return 8 - column;
   }
 
   public static int[] convertFieldNameToIndexes(String fieldName) throws Exception {

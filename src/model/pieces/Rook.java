@@ -33,7 +33,7 @@ public class Rook extends AbstractPiece {
         int puffer_row = row;
         int puffer_column = column;
         while (row + 1 < 8) {
-            if (square[row + 1][column].getEmpty()) {
+            if (square[row + 1][column].isEmpty()) {
                 moves.add(square[row + 1][column]);
                 row++;
             } else {
@@ -49,7 +49,7 @@ public class Rook extends AbstractPiece {
         row = puffer_row;
 
         while (row - 1 > -1) {
-            if (square[row - 1][column].getEmpty()) {
+            if (square[row - 1][column].isEmpty()) {
                 moves.add(square[row - 1][column]);
                 row--;
             } else {
@@ -65,7 +65,7 @@ public class Rook extends AbstractPiece {
         row = puffer_row;
 
         while (column + 1 < 8) {
-            if (square[row][column + 1].getEmpty()) {
+            if (square[row][column + 1].isEmpty()) {
                 moves.add(square[row][column + 1]);
                 column++;
             } else {
@@ -81,7 +81,7 @@ public class Rook extends AbstractPiece {
         column = puffer_column;
 
         while (column - 1 > -1) {
-            if (square[row][column - 1].getEmpty()) {
+            if (square[row][column - 1].isEmpty()) {
                 moves.add(square[row][column - 1]);
                 column--;
             } else {
@@ -122,7 +122,7 @@ public class Rook extends AbstractPiece {
         int puffer_row = row;
         int puffer_column = column;
         while (row + 1 < 8) {
-            if (square[row + 1][column].getEmpty()) {
+            if (square[row + 1][column].isEmpty()) {
                 moves.add(square[row + 1][column]);
                 row++;
             } else {
@@ -137,7 +137,7 @@ public class Rook extends AbstractPiece {
         row = puffer_row;
 
         while (row - 1 > -1) {
-            if (square[row - 1][column].getEmpty()) {
+            if (square[row - 1][column].isEmpty()) {
                 moves.add(square[row - 1][column]);
                 row--;
             } else {
@@ -152,7 +152,7 @@ public class Rook extends AbstractPiece {
         row = puffer_row;
 
         while (column + 1 < 8) {
-            if (square[row][column + 1].getEmpty()) {
+            if (square[row][column + 1].isEmpty()) {
                 moves.add(square[row][column + 1]);
                 column++;
             } else {
@@ -167,7 +167,7 @@ public class Rook extends AbstractPiece {
         column = puffer_column;
 
         while (column - 1 > -1) {
-            if (square[row][column - 1].getEmpty()) {
+            if (square[row][column - 1].isEmpty()) {
                 moves.add(square[row][column - 1]);
                 column--;
             } else {
@@ -207,7 +207,7 @@ public class Rook extends AbstractPiece {
 
 
         while (row + 1 < 8) {
-            if (square[row + 1][column].getEmpty()) {
+            if (square[row + 1][column].isEmpty()) {
                 moves.add(square[row + 1][column]);
                 row++;
             } else {
@@ -229,7 +229,7 @@ public class Rook extends AbstractPiece {
         row = puffer_row;
 
         while (row - 1 > -1) {
-            if (square[row - 1][column].getEmpty()) {
+            if (square[row - 1][column].isEmpty()) {
                 moves.add(square[row - 1][column]);
                 row--;
             } else {
@@ -251,7 +251,7 @@ public class Rook extends AbstractPiece {
         row = puffer_row;
 
         while (column + 1 < 8) {
-            if (square[row][column + 1].getEmpty()) {
+            if (square[row][column + 1].isEmpty()) {
                 moves.add(square[row][column + 1]);
                 column++;
             } else {
@@ -273,7 +273,7 @@ public class Rook extends AbstractPiece {
         column = puffer_column;
 
         while (column - 1 > -1) {
-            if (square[row][column - 1].getEmpty()) {
+            if (square[row][column - 1].isEmpty()) {
                 moves.add(square[row][column - 1]);
                 column--;
             } else {
@@ -302,7 +302,7 @@ public class Rook extends AbstractPiece {
   }
 
   @Override
-  public boolean getHasBeenMoved() {
+  public boolean hasBeenMoved() {
     return false;
   }
 

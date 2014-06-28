@@ -10,31 +10,42 @@ public class Square {
   private boolean threatendByWhite = false;
   private boolean threatendByBlack = false;
 
+  private Piece piece;
   private int rowIndex;
   private int columnIndex;
-  private class ChessNotation{
-    private int rowIndex;
-    private int columnIndex;
 
-    public ChessNotation(int rowIndex, int columnIndex){
-      this.rowIndex = rowIndex;
-      this.columnIndex = columnIndex;
+  public ChessNotation getChessNotation() {
+    return chessNotation;
+  }
+
+  private ChessNotation chessNotation;
+
+  private class ChessNotation {
+    private int rowName;
+    private int columnName;
+    private String chessNotationName;
+
+    @Override
+    public String toString() {
+      return this.chessNotationName;
+    }
+
+    public ChessNotation(int rowIndex, int columnIndex) {
+      this.rowName = ChessNotationUtil.convertRowIndexToChessNotation(rowIndex);
+      this.columnName = columnIndex;
+      this.chessNotationName = ChessNotationUtil.convertFieldIndexToChessNotation(rowName, columnIndex);
     }
   }
-  private String chessNotationName;
-  private Piece piece;
 
   public Square(int rowIndex, int columnIndex, Piece piece) {
     this.rowIndex = rowIndex;
     this.columnIndex = columnIndex;
+    this.chessNotation = new ChessNotation(rowIndex, columnIndex);
     this.piece = piece;
-    this.chessNotationName = ChessNotationUtil.convertFieldIndexToChessNotation(rowIndex, columnIndex);
   }
-
 
   public int getRowIndex() {
     return this.rowIndex;
-
   }
 
   public void setRowIndex(int rowIndex) {
@@ -101,7 +112,7 @@ public class Square {
     return intColumn;
   }
 
-  public boolean getEmpty() {
+  public boolean isEmpty() {
     return (this.piece == null);
   }
 

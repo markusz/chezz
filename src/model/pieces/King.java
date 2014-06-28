@@ -45,7 +45,7 @@ public class King extends AbstractPiece{
                     .isThreatendByWhite();
             if (colour.equals("white"))
                 opponentAttacksField = square[row][column].isThreatendByBlack();
-            if (square[row][column].getEmpty()) {
+            if (square[row][column].isEmpty()) {
                 if (!opponentAttacksField)
                     temp.add(square[row][column]);
 
@@ -87,7 +87,7 @@ public class King extends AbstractPiece{
         temp.clear();
 
         if (!(row < 0 || column < 0 || row > 7 || column > 7)) {
-            if (square[row][column].getEmpty()) {
+            if (square[row][column].isEmpty()) {
                 temp.add(square[row][column]);
             } else {
                 if (!square[row][column].getPiece().getColour().equals(colour)) {
@@ -188,7 +188,7 @@ public class King extends AbstractPiece{
   }
 
   @Override
-  public boolean getHasBeenMoved() {
+  public boolean hasBeenMoved() {
     return false;
   }
 
