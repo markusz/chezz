@@ -8,10 +8,7 @@ import model.Player;
 public interface Piece {
 
   public Player getPlayer();
+  public boolean isWhite();
   public boolean hasBeenMoved();
   public void setHasBeenMoved(boolean hasBeenMoved);
-  public String getType();
-  public void setType(String type);
-  public String getColour();
-  public void setColour(String colour);
 }

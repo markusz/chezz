@@ -3,20 +3,26 @@ package model;
 /**
  * Created by Markus on 28.06.2014.
  */
-public enum Player {
-  FIRST, SECOND;
-
-  public int getId() {
-    if (this == FIRST) {
-      return 1;
-    }
-    return 2;
-  }
+public class Player {
+  public static int WHITE = 1;
+  public static int BLACK = 2;
 
   public boolean isWhite() {
-    if (this == FIRST) {
-      return true;
-    }
-    return false;
+    return isWhite;
   }
+
+  private boolean isWhite;
+
+  private Player(boolean isWhite) {
+    this.isWhite = isWhite;
+  }
+
+  public static Player getWhitePlayer() {
+    return new Player(true);
+  }
+
+  public static Player getBlackPlayer() {
+    return new Player(false);
+  }
+
 }

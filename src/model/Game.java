@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SuppressWarnings({"unused", "serial"})
@@ -19,18 +18,22 @@ public class Game implements Serializable {
   private boolean fieldManipulationForbidden = true;
   private boolean whiteTurn = true;
   private Board board;
+  private Player whitePlayer;
+  private Player blackPlayer;
   private String log = "";
 
-  public Game(Boolean startingLineUp, Boolean fieldManipulationForbidden,
-              Boolean forceMoveOrder) throws Exception {
+  public Game(Boolean startingLineUp, Boolean fieldManipulationForbidden, Boolean forceMoveOrder) throws Exception {
     if (startingLineUp) {
-      this.getBoard().createInitialLineup();
+      board.createInitialLineup();
     }
 
-    this.board = new Board();
+    board = new Board();
+    whitePlayer = Player.getWhitePlayer();
+    blackPlayer = Player.getBlackPlayer();
+
     this.fieldManipulationForbidden = fieldManipulationForbidden;
     this.forceMoveOrder = forceMoveOrder;
-    this.getBoard().markAttackedFields();
+    board.markAttackedFields();
   }
 
   public void addToLog(String move) {
@@ -47,7 +50,7 @@ public class Game implements Serializable {
 
   /**
    * Adds a Figure of "type" and "colour" at "board" .
-   * <p/>
+   * <p>
    * if FieldManipulation, which is determined by the boolean "fieldManipulationForbidden", is allowed.
    *
    * @throws Exception
@@ -55,7 +58,7 @@ public class Game implements Serializable {
   public void addFigure(Square square, Piece piece) throws Exception {
     if (!fieldManipulationForbidden) {
       square.setPiece(piece);
-      this.getBoard().markAttackedFields();
+      board.markAttackedFields();
     } else {
       throw new Exception("Fieldmanipulation is not allowed.");
     }
@@ -64,67 +67,72 @@ public class Game implements Serializable {
   public boolean isCastlingOnWhiteKingsideAllowed() throws Exception {
     Square[][] square = this.getBoard().getSquares();
     ArrayList threatenedFieldsByBlack = MoveUtil.threatenedFieldsOnWhichAnEnemyKingIsCheck("black", square);
-    return square[5][7].isEmpty()
-            && square[6][7].isEmpty()
-            && !square[7][7].isEmpty()
-            && !square[4][7].isEmpty()
-            && !(threatenedFieldsByBlack.contains(square[5][7]))
-            && !(threatenedFieldsByBlack.contains(square[6][7]))
-            && !(GameUtil.isGivenColourCheck("white", board))
-            && !(square[7][7].getPiece().hasBeenMoved())
-            && !(square[4][7].getPiece().hasBeenMoved());
+    Square E1 = square[4][7];
+    Square F1 = square[5][7];
+    Square G1 = square[6][7];
+    Square H1 = square[7][7];
+
+    return F1.isEmpty() && !threatenedFieldsByBlack.contains(F1)
+            && G1.isEmpty() && !threatenedFieldsByBlack.contains(G1)
+            && !H1.isEmpty() && !H1.getPiece().hasBeenMoved()
+            && !E1.isEmpty() && !E1.getPiece().hasBeenMoved()
+            && !GameUtil.isGivenColourCheck("white", board);
 
   }
 
   public boolean isCastlingOnWhiteQueensideAllowed() throws Exception {
     Square[][] square = this.getBoard().getSquares();
     ArrayList threatenedFieldsByBlack = MoveUtil.threatenedFieldsOnWhichAnEnemyKingIsCheck("black", square);
-    return square[1][7].isEmpty()
-            && square[2][7].isEmpty()
-            && square[3][7].isEmpty()
-            && !square[0][7].isEmpty()
-            && !square[4][7].isEmpty()
-            && !(threatenedFieldsByBlack.contains(square[1][7]))
-            && !(threatenedFieldsByBlack.contains(square[2][7]))
-            && !(threatenedFieldsByBlack.contains(square[3][7]))
-            && !(GameUtil.isGivenColourCheck("white", this.getBoard()))
-            && !(square[0][7].getPiece().hasBeenMoved())
-            && !(square[4][7].getPiece().hasBeenMoved());
+    Square A1 = square[0][7];
+    Square B1 = square[1][7];
+    Square C1 = square[2][7];
+    Square D1 = square[3][7];
+    Square E1 = square[4][7];
+
+    return B1.isEmpty() && !threatenedFieldsByBlack.contains(B1)
+            && C1.isEmpty() && !threatenedFieldsByBlack.contains(C1)
+            && D1.isEmpty() && !threatenedFieldsByBlack.contains(D1)
+            && !A1.isEmpty() && !A1.getPiece().hasBeenMoved()
+            && !E1.isEmpty() && !E1.getPiece().hasBeenMoved()
+            && !GameUtil.isGivenColourCheck("white", board);
+
 
   }
 
   public boolean isCastlingOnBlackKingsideAllowed() throws Exception {
     Square[][] square = this.getBoard().getSquares();
     ArrayList threatenedFieldsByWhite = MoveUtil.threatenedFieldsOnWhichAnEnemyKingIsCheck("white", square);
+    Square E8 = square[4][0];
+    Square F8 = square[5][0];
+    Square G8 = square[6][0];
+    Square H8 = square[7][0];
 
-    return square[5][0].isEmpty()
-            && square[6][0].isEmpty()
-            && !square[7][0].isEmpty()
-            && !square[4][0].isEmpty()
-            && !(threatenedFieldsByWhite.contains(square[5][0]))
-            && !(threatenedFieldsByWhite.contains(square[6][0]))
-            && !(GameUtil.isGivenColourCheck("black", this.getBoard()))
-            && !(square[7][0].getPiece().hasBeenMoved())
-            && !(square[4][0].getPiece().hasBeenMoved());
+
+    return F8.isEmpty() && !threatenedFieldsByWhite.contains(F8)
+            && G8.isEmpty() && !threatenedFieldsByWhite.contains(G8)
+            && !H8.isEmpty() && !H8.getPiece().hasBeenMoved()
+            && !E8.isEmpty() && !E8.getPiece().hasBeenMoved()
+            && !GameUtil.isGivenColourCheck("black", board);
+
 
   }
 
   public boolean isCastlingOnBlackQueensideAllowed() throws Exception {
     Square[][] square = this.getBoard().getSquares();
     ArrayList threatenedFieldsByWhite = MoveUtil.threatenedFieldsOnWhichAnEnemyKingIsCheck("white", square);
+    Square A8 = square[0][0];
+    Square B8 = square[1][0];
+    Square C8 = square[2][0];
+    Square D8 = square[3][0];
+    Square E8 = square[4][0];
 
-    return square[1][0].isEmpty()
-            && square[2][0].isEmpty()
-            && square[3][0].isEmpty()
-            && !square[0][0].isEmpty()
-            && !square[4][0].isEmpty()
-            && !(threatenedFieldsByWhite.contains(square[1][0]))
-            && !(threatenedFieldsByWhite.contains(square[2][0]))
-            && !(threatenedFieldsByWhite.contains(square[3][0]))
-            && !(GameUtil.isGivenColourCheck("black", this.getBoard()))
-            && !(square[0][0].getPiece().hasBeenMoved())
-            && !(square[4][0].getPiece().hasBeenMoved());
 
+    return B8.isEmpty() && !threatenedFieldsByWhite.contains(B8)
+            && C8.isEmpty() && !threatenedFieldsByWhite.contains(C8)
+            && D8.isEmpty() && !threatenedFieldsByWhite.contains(D8)
+            && !A8.isEmpty() && !A8.getPiece().hasBeenMoved()
+            && !E8.isEmpty() && !E8.getPiece().hasBeenMoved()
+            && !GameUtil.isGivenColourCheck("black", board);
   }
 
   public void castleOnBlackQueenside() throws Exception {
@@ -143,7 +151,7 @@ public class Game implements Serializable {
   }
 
   public void castleOnWhiteQueenside() throws Exception {
-    if (isCastlingOnWhiteQueensideAllowed()){
+    if (isCastlingOnWhiteQueensideAllowed()) {
       Square c1 = getSquareByChessNotation("C1");
       Square e1 = getSquareByChessNotation("E1");
       Square d1 = getSquareByChessNotation("D1");
@@ -173,7 +181,7 @@ public class Game implements Serializable {
   }
 
   public void castleOnWhiteKingside() throws Exception {
-    if(isCastlingOnWhiteKingsideAllowed()){
+    if (isCastlingOnWhiteKingsideAllowed()) {
 
       Square g1 = getSquareByChessNotation("G1");
       Square e1 = getSquareByChessNotation("E1");
@@ -207,7 +215,7 @@ public class Game implements Serializable {
 
   /**
    * Creates a random Game Situation with a default adding Probability of 0.3.
-   * <p/>
+   * <p>
    * Nevertheless it is ensured that a King of every Colour exists.
    *
    * @throws Exception if the second king is random on the firsts King board.
@@ -223,8 +231,8 @@ public class Game implements Serializable {
     Square squareWhite = board.getSquare(rowKingWhite, columnKingWhite);
     Square squareBlack = board.getSquare(rowKingBlack, columnKingBlack);
 
-    squareWhite.setPiece(new King(Player.FIRST.getId()));
-    squareBlack.setPiece(new King(Player.SECOND.getId()));
+    squareWhite.setPiece(new King(Player.WHITE));
+    squareBlack.setPiece(new King(Player.BLACK));
 
 
     for (int i = 0; i < 8; i++) {
@@ -233,26 +241,26 @@ public class Game implements Serializable {
         if (Math.random() < probability && tempSquare.isEmpty()) {
           if (Math.random() < 0.5) {
             if (Math.random() < 0.4)
-              tempSquare.setPiece(new Pawn(Player.FIRST.getId()));
+              tempSquare.setPiece(new Pawn(Player.WHITE));
             else if (Math.random() < 0.55)
-              tempSquare.setPiece(new Rook(Player.FIRST.getId()));
+              tempSquare.setPiece(new Rook(Player.WHITE));
             else if (Math.random() < 0.7)
-              tempSquare.setPiece(new Bishop(Player.FIRST.getId()));
+              tempSquare.setPiece(new Bishop(Player.WHITE));
             else if (Math.random() < 0.85)
-              tempSquare.setPiece(new Knight(Player.FIRST.getId()));
+              tempSquare.setPiece(new Knight(Player.WHITE));
             else if (Math.random() < 1)
-              tempSquare.setPiece(new Queen(Player.FIRST.getId()));
+              tempSquare.setPiece(new Queen(Player.WHITE));
           } else {
             if (Math.random() < 0.4)
-              tempSquare.setPiece(new Pawn(Player.SECOND.getId()));
+              tempSquare.setPiece(new Pawn(Player.BLACK));
             else if (Math.random() < 0.55)
-              tempSquare.setPiece(new Rook(Player.SECOND.getId()));
+              tempSquare.setPiece(new Rook(Player.BLACK));
             else if (Math.random() < 0.7)
-              tempSquare.setPiece(new Bishop(Player.SECOND.getId()));
+              tempSquare.setPiece(new Bishop(Player.BLACK));
             else if (Math.random() < 0.85)
-              tempSquare.setPiece(new Knight(Player.SECOND.getId()));
+              tempSquare.setPiece(new Knight(Player.BLACK));
             else if (Math.random() < 1)
-              tempSquare.setPiece(new Queen(Player.SECOND.getId()));
+              tempSquare.setPiece(new Queen(Player.BLACK));
           }
         }
       }
@@ -332,7 +340,7 @@ public class Game implements Serializable {
 
   /**
    * Moves the figure on startingfield to destinationfield
-   * <p/>
+   * <p>
    * Precondition:
    * destinationfield is not empty and Move has been validated inside movePiece method
    *
@@ -389,133 +397,37 @@ public class Game implements Serializable {
     }
   }
 
-  public String[] randomMove() {
-    String[] moves = new String[2];
+  public Square[] randomMove() {
+    Random r = new Random();
+    int fromRowIndex = r.nextInt(8);
+    int fromColumnIndex = r.nextInt(8);
+    int toRowIndex = r.nextInt(8);
+    int toColumnIndex = r.nextInt(8);
 
-    int rowStart = (int) (Math.random() * 10000 % 8);
-    int columnStart = (int) (Math.random() * 10000 % 8);
-    int rowDestination = (int) (Math.random() * 10000 % 8);
-    int columnDestination = (int) (Math.random() * 10000 % 8);
+    Square from = board.getSquare(fromRowIndex, fromColumnIndex);
+    Square to = board.getSquare(toRowIndex, toColumnIndex);
 
-    char rowCharStart = 'A';
-    char rowCharDestination = 'B';
-
-    if (rowDestination == 0)
-      rowCharDestination = 'A';
-    else if (rowDestination == 7)
-      rowCharDestination = 'H';
-    else if (rowDestination == 6)
-      rowCharDestination = 'G';
-    else if (rowDestination == 5)
-      rowCharDestination = 'F';
-    else if (rowDestination == 4)
-      rowCharDestination = 'E';
-    else if (rowDestination == 3)
-      rowCharDestination = 'D';
-    else if (rowDestination == 2)
-      rowCharDestination = 'C';
-    else if (rowDestination == 1)
-      rowCharDestination = 'B';
-
-    if (rowStart == 0)
-      rowCharStart = 'A';
-    else if (rowStart == 7)
-      rowCharStart = 'H';
-    else if (rowStart == 6)
-      rowCharStart = 'G';
-    else if (rowStart == 5)
-      rowCharStart = 'F';
-    else if (rowStart == 4)
-      rowCharStart = 'E';
-    else if (rowStart == 3)
-      rowCharStart = 'D';
-    else if (rowStart == 2)
-      rowCharStart = 'C';
-    else if (rowStart == 1)
-      rowCharStart = 'B';
-
-    columnStart++;
-    columnDestination++;
-
-
-    moves[0] = ("" + rowCharStart + "" + columnStart);
-    moves[1] = ("" + rowCharDestination + "" + columnDestination);
-    return moves;
-
+    return new Square[]{from, to};
   }
 
   /**
    * Moves Figures depending on moveManually
-   * <p/>
+   * <p>
    * if moveManually is true, white Moves are determined by the User instead of being randomed
    * else every Move is random
    *
    * @throws Exception
    */
   public void moveRandomConfirmMoves(boolean moveManually, boolean mainMenu) throws Exception {
-    String turn = "white";
     printPlayingField();
 
     while (this.countFigures() > 2) {
-      int rowStart = (int) (Math.random() * 10000 % 8);
-      int columnStart = (int) (Math.random() * 10000 % 8);
-      int rowDestination = (int) (Math.random() * 10000 % 8);
-      int columnDestination = (int) (Math.random() * 10000 % 8);
-
-      char rowCharStart = 'A';
-      char rowCharDestination = 'B';
-
-      if (rowDestination == 0)
-        rowCharDestination = 'A';
-      else if (rowDestination == 7)
-        rowCharDestination = 'H';
-      else if (rowDestination == 6)
-        rowCharDestination = 'G';
-      else if (rowDestination == 5)
-        rowCharDestination = 'F';
-      else if (rowDestination == 4)
-        rowCharDestination = 'E';
-      else if (rowDestination == 3)
-        rowCharDestination = 'D';
-      else if (rowDestination == 2)
-        rowCharDestination = 'C';
-      else if (rowDestination == 1)
-        rowCharDestination = 'B';
-
-      if (rowStart == 0)
-        rowCharStart = 'A';
-      else if (rowStart == 7)
-        rowCharStart = 'H';
-      else if (rowStart == 6)
-        rowCharStart = 'G';
-      else if (rowStart == 5)
-        rowCharStart = 'F';
-      else if (rowStart == 4)
-        rowCharStart = 'E';
-      else if (rowStart == 3)
-        rowCharStart = 'D';
-      else if (rowStart == 2)
-        rowCharStart = 'C';
-      else if (rowStart == 1)
-        rowCharStart = 'B';
-
-      columnStart++;
-      columnDestination++;
-
-
-      String start = ("" + rowCharStart + "" + columnStart);
-      String destination = ("" + rowCharDestination + "" + columnDestination);
-
-      int[] startArray = ChessNotationUtil.convertFieldNameToIndexes(start);
-      int[] destinationArray = ChessNotationUtil
-              .convertFieldNameToIndexes(destination);
-
       if (GameUtil.isCheckMate("white", this.board) || GameUtil.isCheckMate("black", this.board)) {
         printPlayingField();
         break;
       }
       if (moveManually) {
-        if (turn.equals("white")) {
+        if (whiteTurn) {
           //printPlayingField();
           while (true) {
             if (mainMenu) {
@@ -525,36 +437,27 @@ public class Game implements Serializable {
             Pattern pattern = Pattern.compile("[a-hA-H][1-8]");
 
             System.out.print("	Please Insert Starting Field Of Your Next Move: ");
-            String startField = scanner.next();
-            Matcher startMatcher = pattern.matcher(startField);
-            boolean startMatches = startMatcher.matches();
-            if (!startMatches) {
+            String fromAsString = scanner.next();
+            if (!pattern.matcher(fromAsString).matches()) {
               System.out.println("\n	Failure. This is an invalid Input. Please insert again: \n");
               continue;
             }
+
             System.out.print("	Please Insert Destination Field Of Your Next Move: ");
-            String destinationField = scanner.next();
-            Matcher destinationMatcher = pattern.matcher(destinationField);
-            boolean destinationMatches = destinationMatcher.matches();
-            if (!destinationMatches) {
+            String toAsString = scanner.next();
+            if (!pattern.matcher(toAsString).matches()) {
               System.out.println("\n	Failure. This is an invalid Input. Please insert again: \n");
               continue;
             }
 
-            int[] startingFieldHelp = ChessNotationUtil
-                    .convertFieldNameToIndexes(startField);
-            int[] destinationFieldHelp = ChessNotationUtil
-                    .convertFieldNameToIndexes(destinationField);
+            Square fromF = getSquareByChessNotation(fromAsString);
+            Square toF = getSquareByChessNotation(toAsString);
 
-            if (!(this.board.getSquares()[startingFieldHelp[0]][startingFieldHelp[1]].isEmpty()) && MoveUtil.isValidMove(startingFieldHelp[0], startingFieldHelp[1], destinationFieldHelp[0], destinationFieldHelp[1], this.board)) {
+            if (!fromF.isEmpty() && MoveUtil.isValidMove(fromF, toF, board)) {
 
-              Square startSquare_2 = this.board.getSquares()[startingFieldHelp[0]][startingFieldHelp[1]];
-              String colourStart = startSquare_2.getPiece().getColour();
-              String typeStart = startSquare_2.getPiece().getType();
-              Square destinationSquare_2 = this.board.getSquares()[destinationFieldHelp[0]][destinationFieldHelp[1]];
-              movePiece(startField, destinationField);
-              System.out.println("	" + startField + " -> " + destinationField + " (" + colourStart + " " + typeStart + ")");
-              turn = "black";
+              movePiece(fromF, toF);
+              System.out.println("	" + fromAsString + " -> " + toAsString);
+              whiteTurn = !whiteTurn;
               break;
             } else
               System.out.println("\n	Failure. This is an invalid Move. Please insert again: \n");
@@ -562,88 +465,24 @@ public class Game implements Serializable {
 
         } else {
           while (true) {
+            Random r = new Random();
+            int fromRowIndex = r.nextInt(8);
+            int fromColumnIndex = r.nextInt(8);
+            int toRowIndex = r.nextInt(8);
+            int toColumnIndex = r.nextInt(8);
 
-            rowStart = (int) (Math.random() * 10000 % 8);
-            columnStart = (int) (Math.random() * 10000 % 8);
-            rowDestination = (int) (Math.random() * 10000 % 8);
-            columnDestination = (int) (Math.random() * 10000 % 8);
+            Square from = board.getSquare(fromRowIndex, fromColumnIndex);
+            Square to = board.getSquare(toRowIndex, toColumnIndex);
 
-            rowCharStart = 'A';
-            rowCharDestination = 'B';
-
-            if (rowDestination == 0)
-              rowCharDestination = 'A';
-            else if (rowDestination == 7)
-              rowCharDestination = 'H';
-            else if (rowDestination == 6)
-              rowCharDestination = 'G';
-            else if (rowDestination == 5)
-              rowCharDestination = 'F';
-            else if (rowDestination == 4)
-              rowCharDestination = 'E';
-            else if (rowDestination == 3)
-              rowCharDestination = 'D';
-            else if (rowDestination == 2)
-              rowCharDestination = 'C';
-            else if (rowDestination == 1)
-              rowCharDestination = 'B';
-
-            if (rowStart == 0)
-              rowCharStart = 'A';
-            else if (rowStart == 7)
-              rowCharStart = 'H';
-            else if (rowStart == 6)
-              rowCharStart = 'G';
-            else if (rowStart == 5)
-              rowCharStart = 'F';
-            else if (rowStart == 4)
-              rowCharStart = 'E';
-            else if (rowStart == 3)
-              rowCharStart = 'D';
-            else if (rowStart == 2)
-              rowCharStart = 'C';
-            else if (rowStart == 1)
-              rowCharStart = 'B';
-
-            columnStart++;
-            columnDestination++;
-
-
-            start = ("" + rowCharStart + "" + columnStart);
-            destination = ("" + rowCharDestination + "" + columnDestination);
-
-            startArray = ChessNotationUtil.convertFieldNameToIndexes(start);
-            destinationArray = ChessNotationUtil
-                    .convertFieldNameToIndexes(destination);
-
-            if (!(board.getSquares()[rowStart][8 - columnStart].isEmpty()) && (board.getSquares()[rowStart][8 - columnStart].getPiece().getColour().equals(turn)) && (MoveUtil.isValidMove(startArray[0], startArray[1], destinationArray[0], destinationArray[1], board))) {
-              movePiece(start, destination);
-              System.out.println("	" + start + " -> " + destination + " (" + board.getSquares()[rowDestination][8 - columnDestination].getPiece().getColour() + " " + board.getSquares()[rowDestination][8 - columnDestination].getPiece().getType() + ")\n\n");
-              turn = "white";
+            if (!from.isEmpty() && from.getPiece().isWhite() == whiteTurn && MoveUtil.isValidMove(from, to, board)) {
+              movePiece(from, to);
+              System.out.println("	" + from + " -> " + to);
+              whiteTurn = !whiteTurn;
               break;
             }
           }
 
         }
-
-      } else {
-
-        if (!(board.getSquares()[rowStart][8 - columnStart].isEmpty()) && (board.getSquares()[rowStart][8 - columnStart].getPiece().getColour().equals(turn)) && (MoveUtil.isValidMove(startArray[0], startArray[1], destinationArray[0], destinationArray[1], board))) {
-
-
-          movePiece(start, destination);
-          System.out.println("	" + start + " -> " + destination + " (" + board.getSquares()[rowDestination][8 - columnDestination].getPiece().getColour() + " " + board.getSquares()[rowDestination][8 - columnDestination].getPiece().getType() + ")\n\n");
-
-          Scanner scanner = new Scanner(System.in);
-          String s = scanner.nextLine();
-
-
-          if (turn.equals("white"))
-            turn = "black";
-          else
-            turn = "white";
-        }
-
       }
     }
   }
@@ -651,7 +490,7 @@ public class Game implements Serializable {
   /**
    * UNUSED
    * Prints all allowed moves for a Colour.
-   * <p/>
+   * <p>
    * Does NOT consider the fact, that at checked Situation only Moves protecting the King are allowed
    *
    * @param colour "white" or "black"
@@ -693,9 +532,9 @@ public class Game implements Serializable {
 
   /**
    * UNUSED
-   * <p/>
+   * <p>
    * Prints every Field between the given board and the enemy King
-   * <p/>
+   * <p>
    * Works for Bishop, Rook and Queen.
    *
    * @param field
@@ -782,27 +621,27 @@ public class Game implements Serializable {
 
   /**
    * Prints all actually allowed Moves for the given Colour.
-   * <p/>
+   * <p>
    * Considers if the King is check.
    *
    * @param colour
    * @throws Exception
    */
-  public void printListOfMovesAllowedForColour(String colour) throws Exception {
-    if (GameUtil.isGivenColourCheck(colour, this.board)) {
-      printMovesAllowedAtACheckedSituation(colour);
+  public void printListOfMovesAllowedForColour(Player player) throws Exception {
+    if (GameUtil.isGivenColourCheck(player, board)) {
+      printMovesAllowedAtACheckedSituation(player);
     } else {
-      printAllMovesForColourNotCheck(colour);
+      printAllMovesForColourNotCheck(player);
     }
 
   }
 
-  public String printListOfMovesAllowedForColourToString(String colour) throws Exception {
+  public String printListOfMovesAllowedForColourToString(Player player) throws Exception {
     String moves = "";
-    if (GameUtil.isGivenColourCheck(colour, this.board)) {
-      moves = moves + printMovesAllowedAtACheckedSituationToString(colour);
+    if (GameUtil.isGivenColourCheck(player, board)) {
+      moves = moves + printMovesAllowedAtACheckedSituationToString(player);
     } else {
-      moves = moves + printAllMovesForColourNotCheckToString(colour);
+      moves = moves + printAllMovesForColourNotCheckToString(player);
     }
 
     return moves;
@@ -828,11 +667,10 @@ public class Game implements Serializable {
    * @param colour
    * @throws Exception
    */
-  @SuppressWarnings("unchecked")
-  public void printMovesAllowedAtACheckedSituation(String colour) throws Exception {
-    ArrayList moves = MoveUtil.movesAllowedAtACheckedSituation(colour, this.board);
+  public void printMovesAllowedAtACheckedSituation(Player player) throws Exception {
+    ArrayList moves = MoveUtil.movesAllowedAtACheckedSituation(player, board);
     System.out.println("\n=========================================================================");
-    System.out.println("\n	A List Of Allowed Moves for " + colour + " (" + moves.size() + "):\n\n");
+    System.out.println("\n	A List Of Allowed Moves for " + player + " (" + moves.size() + "):\n\n");
     System.out.println("	Note:");
     System.out.println("	You Are Check, Therefore Your Allowed Moves Are Limited To The Following:\n");
     for (int i = 0; i < moves.size(); i++) {
@@ -844,13 +682,9 @@ public class Game implements Serializable {
     }
   }
 
-  @SuppressWarnings("unchecked")
-  public String printMovesAllowedAtACheckedSituationToString(String colour) throws Exception {
+  public String printMovesAllowedAtACheckedSituationToString(Player player) throws Exception {
     String movesString = "";
-    ArrayList moves = MoveUtil.movesAllowedAtACheckedSituation(colour, this.board);
-    //movesString = movesString+("\n=========================================================================\n");
-    //movesString = movesString+("A List Of Allowed Moves for "+colour+" ("+moves.size()+"):\n\n");
-    //movesString = movesString+("Note:\n");
+    ArrayList moves = MoveUtil.movesAllowedAtACheckedSituation(player, board);
     movesString = movesString + ("You Are Check!\nTherefore your allowed\nMoves are limited to:\n\n");
     for (int i = 0; i < moves.size(); i++) {
       Move currentMove = (Move) moves.get(i);
@@ -957,11 +791,21 @@ public class Game implements Serializable {
         String field = scanner.next();
         this.printPlayingField(field);
       } else if (choice.equals("3")) {
-        System.out.println();
         System.out.print("	Insert wQ for queenside Castling or wK for kingside Castling:	");
 
         String field = scanner.next();
-        this.castling(field);
+        if (field.equalsIgnoreCase("wq")) {
+          castleOnWhiteQueenside();
+        }
+        if (field.equalsIgnoreCase("wk")) {
+          castleOnWhiteKingside();
+        }
+        if (field.equalsIgnoreCase("bq")) {
+          castleOnBlackQueenside();
+        }
+        if (field.equalsIgnoreCase("bk")) {
+          castleOnBlackKingside();
+        }
       } else if (choice.equals("4")) {
         System.out.println();
         break;
@@ -996,7 +840,7 @@ public class Game implements Serializable {
 
   /**
    * Prints the playing board and marks allowed fields to move, either for a specific figure or a colour
-   * <p/>
+   * <p>
    * checked 10.4
    *
    * @param input = "a3", "B2"... for a board and "white" or "black" for a colour
@@ -1035,7 +879,7 @@ public class Game implements Serializable {
 
   /**
    * Prints the playing board and marks allowed fields for the king to move
-   * <p/>
+   * <p>
    * checked 10.4
    *
    * @param colour = "white" or "black"
@@ -1070,7 +914,7 @@ public class Game implements Serializable {
 
   /**
    * Runs the following test on the current Game:
-   * <p/>
+   * <p>
    * printPlayingField();
    * printAllPossibleMovesForColour("white");
    * printAllPossibleMovesForColour("black");
@@ -1136,33 +980,25 @@ public class Game implements Serializable {
   /**
    * Returns if a Move is valid at the current (checked) Situation
    *
-   * @param startingField
-   * @param destinationField
+   * @param from
+   * @param to
    * @return
    * @throws Exception
    */
   @SuppressWarnings("unchecked")
-  public boolean validMoveAtCheckedSituation(String startingField, String destinationField) throws Exception {
-    int[] startingFieldHelp = ChessNotationUtil.convertFieldNameToIndexes(startingField);
-    int[] destinationFieldHelp = ChessNotationUtil.convertFieldNameToIndexes(destinationField);
+  public boolean isValidMoveInACheckedSituation(Square from, Square to) throws Exception {
+    Player player = from.getPiece().getPlayer();
+    Move moveToBeChecked = new Move(from, to);
 
-    Square[][] squareArray = this.board.getSquares();
-    Square startSquare = squareArray[startingFieldHelp[0]][startingFieldHelp[1]];
-    Square destinationField_Square = squareArray[destinationFieldHelp[0]][destinationFieldHelp[1]];
-    String colour = startSquare.getPiece().getColour();
-
-    Move moveToBeChecked = new Move(startSquare, destinationField_Square);
-
-    ArrayList validMoves = MoveUtil.movesAllowedAtACheckedSituation(colour, this.board);
+    ArrayList validMoves = MoveUtil.movesAllowedAtACheckedSituation(player, board);
     boolean contains = false;
     for (int i = 0; i < validMoves.size(); i++) {
       Move currentMove = (Move) validMoves.get(i);
-      if (currentMove.getStartSquare().equals(startSquare) && currentMove.getDestinationSquare().equals(destinationField_Square))
-        contains = true;
+      if (currentMove.getStartSquare().equals(from) && currentMove.getDestinationSquare().equals(to))
+        return true;
 
     }
-
-    return contains;
+    return false;
   }
 
 }

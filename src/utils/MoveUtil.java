@@ -3,6 +3,7 @@ package utils;
 import logic.Moves;
 import model.Move;
 import model.Board;
+import model.Player;
 import model.Square;
 import model.pieces.Piece;
 
@@ -287,7 +288,7 @@ public class MoveUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static ArrayList movesAllowedAtACheckedSituation(String colour,
+    public static ArrayList movesAllowedAtACheckedSituation(Player player,
                                                             Board field) throws Exception {
 
         Square squareKing = BoardUtil.getKingFieldByColour(colour, field);

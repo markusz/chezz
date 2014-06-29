@@ -116,40 +116,40 @@ public class Board {
    */
   public void createInitialLineup() throws Exception {
 
-    setPiece(0, 1, new Pawn(Player.SECOND.getId()));
-    setPiece(1, 1, new Pawn(Player.SECOND.getId()));
-    setPiece(2, 1, new Pawn(Player.SECOND.getId()));
-    setPiece(3, 1, new Pawn(Player.SECOND.getId()));
-    setPiece(4, 1, new Pawn(Player.SECOND.getId()));
-    setPiece(5, 1, new Pawn(Player.SECOND.getId()));
-    setPiece(6, 1, new Pawn(Player.SECOND.getId()));
-    setPiece(7, 1, new Pawn(Player.SECOND.getId()));
-    setPiece(0, 0, new Rook(Player.SECOND.getId()));
-    setPiece(1, 0, new Knight(Player.SECOND.getId()));
-    setPiece(2, 0, new Bishop(Player.SECOND.getId()));
-    setPiece(3, 0, new Queen(Player.SECOND.getId()));
-    setPiece(4, 0, new King(Player.SECOND.getId()));
-    setPiece(5, 0, new Bishop(Player.SECOND.getId()));
-    setPiece(6, 0, new Knight(Player.SECOND.getId()));
-    setPiece(7, 0, new Rook(Player.SECOND.getId()));
+    setPiece(0, 1, new Pawn(Player.BLACK));
+    setPiece(1, 1, new Pawn(Player.BLACK));
+    setPiece(2, 1, new Pawn(Player.BLACK));
+    setPiece(3, 1, new Pawn(Player.BLACK));
+    setPiece(4, 1, new Pawn(Player.BLACK));
+    setPiece(5, 1, new Pawn(Player.BLACK));
+    setPiece(6, 1, new Pawn(Player.BLACK));
+    setPiece(7, 1, new Pawn(Player.BLACK));
+    setPiece(0, 0, new Rook(Player.BLACK));
+    setPiece(1, 0, new Knight(Player.BLACK));
+    setPiece(2, 0, new Bishop(Player.BLACK));
+    setPiece(3, 0, new Queen(Player.BLACK));
+    setPiece(4, 0, new King(Player.BLACK));
+    setPiece(5, 0, new Bishop(Player.BLACK));
+    setPiece(6, 0, new Knight(Player.BLACK));
+    setPiece(7, 0, new Rook(Player.BLACK));
 
 
-    setPiece(0, 6, new Pawn(Player.FIRST.getId()));
-    setPiece(1, 6, new Pawn(Player.FIRST.getId()));
-    setPiece(2, 6, new Pawn(Player.FIRST.getId()));
-    setPiece(3, 6, new Pawn(Player.FIRST.getId()));
-    setPiece(4, 6, new Pawn(Player.FIRST.getId()));
-    setPiece(5, 6, new Pawn(Player.FIRST.getId()));
-    setPiece(6, 6, new Pawn(Player.FIRST.getId()));
-    setPiece(7, 6, new Pawn(Player.FIRST.getId()));
-    setPiece(0, 7, new Rook(Player.FIRST.getId()));
-    setPiece(1, 7, new Knight(Player.FIRST.getId()));
-    setPiece(2, 7, new Bishop(Player.FIRST.getId()));
-    setPiece(3, 7, new Queen(Player.FIRST.getId()));
-    setPiece(4, 7, new King(Player.FIRST.getId()));
-    setPiece(5, 7, new Bishop(Player.FIRST.getId()));
-    setPiece(6, 7, new Knight(Player.FIRST.getId()));
-    setPiece(7, 7, new Rook(Player.SECOND.getId()));
+    setPiece(0, 6, new Pawn(Player.WHITE));
+    setPiece(1, 6, new Pawn(Player.WHITE));
+    setPiece(2, 6, new Pawn(Player.WHITE));
+    setPiece(3, 6, new Pawn(Player.WHITE));
+    setPiece(4, 6, new Pawn(Player.WHITE));
+    setPiece(5, 6, new Pawn(Player.WHITE));
+    setPiece(6, 6, new Pawn(Player.WHITE));
+    setPiece(7, 6, new Pawn(Player.WHITE));
+    setPiece(0, 7, new Rook(Player.WHITE));
+    setPiece(1, 7, new Knight(Player.WHITE));
+    setPiece(2, 7, new Bishop(Player.WHITE));
+    setPiece(3, 7, new Queen(Player.WHITE));
+    setPiece(4, 7, new King(Player.WHITE));
+    setPiece(5, 7, new Bishop(Player.WHITE));
+    setPiece(6, 7, new Knight(Player.WHITE));
+    setPiece(7, 7, new Rook(Player.WHITE));
   }
 
   public void moveFigure(Square from, Square to) throws Exception {
