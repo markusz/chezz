@@ -1,51 +1,54 @@
 package model;
 
+import exceptions.SquareNotFoundException;
 import model.pieces.*;
-import sun.reflect.annotation.ExceptionProxy;
 import utils.ChessNotationUtil;
 import utils.MoveUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class Board {
 
 
-  private int moveCounter = 0;
+  private Game game;
   private Square[][] squares;
   private Collection<Square> iterableSqaures;
   private ArrayList<Square> attackedByWhite;
   private ArrayList<Square> attackedByBlack;
+  private Map<String, Square> squareMap = new TreeMap<>();
 
-  public Board() {
+  private Square whiteKingSquare;
+  private Square blackKingSquare;
+
+  public Board(Game game) {
+
+    this.game = game;
     initBoard();
   }
 
   private void initBoard() {
     this.squares = new Square[8][8];
 
-    for (int i = 0; i < 8; i++) {
-      for (int j = 0; j < 8; j++) {
-        if (squares[i][j] == null)
-          squares[i][j] = new Square(i, j, null);
-        iterableSqaures.add(squares[i][j]);
+    for (int row = 0; row < 8; row++) {
+      for (int column = 0; column < 8; column++) {
+        if (squares[row][column] == null) {
+          squares[row][column] = new Square(row, column, null);
+          iterableSqaures.add(squares[row][column]);
+          squareMap.put(ChessNotationUtil.convertFieldIndexToChessNotation(row, column), squares[row][column]);
+        }
       }
     }
   }
 
-  public void increaseMovesCounter() {
-    moveCounter++;
-  }
-
-  public int getMovesCounter() {
-    return moveCounter;
-  }
 
   /**
    * marks every attacked field for both colours, regardless of the colour actually being allowed to move there.
    * i.e the white king on E3 and a black rook on D7. Although the king on E3 is not allowed to move on any D-Row field because of the rook on D7.
    * Nevertheless a black king on C3 would also not be allowed to move on any D-Row field because of the E3 King.
-   * <p/>
+   * <p>
    * So this method is used in the king class to determine by the king class whether a move on a empty field is valid
    */
   @SuppressWarnings("unchecked")
@@ -59,13 +62,9 @@ public class Board {
     }
   }
 
-
-  public void setPiece(int row, int column, Piece piece) throws Exception {
-    this.squares[row][column].setPiece(piece);
-  }
-
   public void setPiece(Square square, Piece piece) throws Exception {
     square.setPiece(piece);
+    piece.setCurrentPositionOnBoard(square);
   }
 
   /**
@@ -108,6 +107,18 @@ public class Board {
 
   }
 
+  public Square getSquare(String nameInChessNotation){
+    return squareMap.get(nameInChessNotation);
+  }
+
+
+  public Square getBlackKingSquare() {
+    return blackKingSquare;
+  }
+
+  public Square getWhiteKingSquare() {
+    return whiteKingSquare;
+  }
 
   /**
    * adds the common chess starting Lineup to a Board
@@ -115,57 +126,101 @@ public class Board {
    * @throws Exception
    */
   public void createInitialLineup() throws Exception {
+Player black = game.getBlackPlayer();
+Player white = game.getWhitePlayer();
 
-    setPiece(0, 1, new Pawn(Player.BLACK));
-    setPiece(1, 1, new Pawn(Player.BLACK));
-    setPiece(2, 1, new Pawn(Player.BLACK));
-    setPiece(3, 1, new Pawn(Player.BLACK));
-    setPiece(4, 1, new Pawn(Player.BLACK));
-    setPiece(5, 1, new Pawn(Player.BLACK));
-    setPiece(6, 1, new Pawn(Player.BLACK));
-    setPiece(7, 1, new Pawn(Player.BLACK));
-    setPiece(0, 0, new Rook(Player.BLACK));
-    setPiece(1, 0, new Knight(Player.BLACK));
-    setPiece(2, 0, new Bishop(Player.BLACK));
-    setPiece(3, 0, new Queen(Player.BLACK));
-    setPiece(4, 0, new King(Player.BLACK));
-    setPiece(5, 0, new Bishop(Player.BLACK));
-    setPiece(6, 0, new Knight(Player.BLACK));
-    setPiece(7, 0, new Rook(Player.BLACK));
+    setPiece(getSquare("A8"), new Rook(black));
+    setPiece(getSquare("B8"), new Knight(black));
+    setPiece(getSquare("C8"), new Bishop(black));
+    setPiece(getSquare("D8"), new Queen(black));
+    setPiece(getSquare("E8"), new King(black));
+    blackKingSquare = getSquare("E8");
+    setPiece(getSquare("F8"), new Bishop(black));
+    setPiece(getSquare("G8"), new Knight(black));
+    setPiece(getSquare("H8"), new Rook(black));
 
+    setPiece(getSquare("A7"), new Pawn(black));
+    setPiece(getSquare("B7"), new Pawn(black));
+    setPiece(getSquare("C7"), new Pawn(black));
+    setPiece(getSquare("D7"), new Pawn(black));
+    setPiece(getSquare("E7"), new Pawn(black));
+    setPiece(getSquare("F7"), new Pawn(black));
+    setPiece(getSquare("G7"), new Pawn(black));
+    setPiece(getSquare("H7"), new Pawn(black));
 
-    setPiece(0, 6, new Pawn(Player.WHITE));
-    setPiece(1, 6, new Pawn(Player.WHITE));
-    setPiece(2, 6, new Pawn(Player.WHITE));
-    setPiece(3, 6, new Pawn(Player.WHITE));
-    setPiece(4, 6, new Pawn(Player.WHITE));
-    setPiece(5, 6, new Pawn(Player.WHITE));
-    setPiece(6, 6, new Pawn(Player.WHITE));
-    setPiece(7, 6, new Pawn(Player.WHITE));
-    setPiece(0, 7, new Rook(Player.WHITE));
-    setPiece(1, 7, new Knight(Player.WHITE));
-    setPiece(2, 7, new Bishop(Player.WHITE));
-    setPiece(3, 7, new Queen(Player.WHITE));
-    setPiece(4, 7, new King(Player.WHITE));
-    setPiece(5, 7, new Bishop(Player.WHITE));
-    setPiece(6, 7, new Knight(Player.WHITE));
-    setPiece(7, 7, new Rook(Player.WHITE));
+    setPiece(getSquare("A1"), new Rook(white));
+    setPiece(getSquare("B1"), new Knight(white));
+    setPiece(getSquare("C1"), new Bishop(white));
+    setPiece(getSquare("D1"), new Queen(white));
+    setPiece(getSquare("E1"), new King(white));
+    whiteKingSquare = getSquare("E1");
+    setPiece(getSquare("F1"), new Bishop(white));
+    setPiece(getSquare("G1"), new Knight(white));
+    setPiece(getSquare("H1"), new Rook(white));
+
+    setPiece(getSquare("A2"), new Pawn(white));
+    setPiece(getSquare("B2"), new Pawn(white));
+    setPiece(getSquare("C2"), new Pawn(white));
+    setPiece(getSquare("D2"), new Pawn(white));
+    setPiece(getSquare("E2"), new Pawn(white));
+    setPiece(getSquare("F2"), new Pawn(white));
+    setPiece(getSquare("G2"), new Pawn(white));
+    setPiece(getSquare("H2"), new Pawn(white));
   }
 
   public void moveFigure(Square from, Square to) throws Exception {
 
 
     if (from.isEmpty()) {
-      throw new Exception("Invalid Move: " + from.getChessNotation()+" is Empty");
+      throw new Exception("Invalid Move: " + from.getChessNotation() + " is Empty");
     }
 
     if (MoveUtil.isValidMove(from, to, this)) {
       to.setPiece(from.getPiece());
       from.setEmpty();
       from.getPiece().setHasBeenMoved(true);
-      increaseMovesCounter();
+      game.increaseMovesCounter();
     } else {
-      throw new Exception("Invalid Move: " + from.getChessNotation() +" -> "+to.getChessNotation());
+      throw new Exception("Invalid Move: " + from.getChessNotation() + " -> " + to.getChessNotation());
+    }
+  }
+
+  /**
+   *
+   * @param start
+   * @param n
+   * @param boardOrientation -1 for black player, 1 for white
+   * @return
+   */
+  public Square getSquareNRowsAhead(Square start, int n, int boardOrientation) throws SquareNotFoundException {
+    try {
+      return squares[start.getRowIndex() + (boardOrientation * n)][start.getColumnIndex()];
+    } catch (ArrayIndexOutOfBoundsException e) {
+      throw new SquareNotFoundException();
+    }
+  }
+
+  private Square getSquareNColumnsStraightToTheRight(Square start, int n, int boardOrientation) throws SquareNotFoundException {
+    try {
+      return squares[start.getRowIndex()][start.getColumnIndex() + (boardOrientation * n)];
+    } catch (ArrayIndexOutOfBoundsException e) {
+      throw new SquareNotFoundException();
+    }
+  }
+
+  private Square getSquareNColumnsStraightToTheLeft(Square start, int n, int boardOrientation) throws SquareNotFoundException {
+    try {
+      return squares[start.getRowIndex()][start.getColumnIndex() - (boardOrientation * n)];
+    } catch (ArrayIndexOutOfBoundsException e) {
+      throw new SquareNotFoundException();
+    }
+  }
+
+  private Square getSquareNRowsMColumnsAway(Square start, int n, int m, int boardOrientation) throws SquareNotFoundException {
+    try {
+      return squares[start.getRowIndex()+ (boardOrientation * n)][start.getColumnIndex() + (boardOrientation * m)];
+    } catch (ArrayIndexOutOfBoundsException e) {
+      throw new SquareNotFoundException();
     }
   }
 }

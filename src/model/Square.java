@@ -116,10 +116,6 @@ public class Square {
     return (this.piece == null);
   }
 
-  public String getType() {
-    return this.piece.getType();
-  }
-
   public Piece getPiece() {
     return this.piece;
   }

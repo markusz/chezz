@@ -17,7 +17,17 @@ public class Game implements Serializable {
   private boolean forceMoveOrder = true;
   private boolean fieldManipulationForbidden = true;
   private boolean whiteTurn = true;
+  private int moveCounter = 0;
   private Board board;
+
+  public Player getWhitePlayer() {
+    return whitePlayer;
+  }
+
+  public Player getBlackPlayer() {
+    return blackPlayer;
+  }
+
   private Player whitePlayer;
   private Player blackPlayer;
   private String log = "";
@@ -27,7 +37,7 @@ public class Game implements Serializable {
       board.createInitialLineup();
     }
 
-    board = new Board();
+    board = new Board(this);
     whitePlayer = Player.getWhitePlayer();
     blackPlayer = Player.getBlackPlayer();
 
@@ -46,6 +56,14 @@ public class Game implements Serializable {
 
   public String getLog() {
     return log;
+  }
+
+  public void increaseMovesCounter() {
+    moveCounter++;
+  }
+
+  public int getMovesCounter() {
+    return moveCounter;
   }
 
   /**
@@ -231,8 +249,8 @@ public class Game implements Serializable {
     Square squareWhite = board.getSquare(rowKingWhite, columnKingWhite);
     Square squareBlack = board.getSquare(rowKingBlack, columnKingBlack);
 
-    squareWhite.setPiece(new King(Player.WHITE));
-    squareBlack.setPiece(new King(Player.BLACK));
+    squareWhite.setPiece(new King(whitePlayer));
+    squareBlack.setPiece(new King(blackPlayer));
 
 
     for (int i = 0; i < 8; i++) {
@@ -241,26 +259,26 @@ public class Game implements Serializable {
         if (Math.random() < probability && tempSquare.isEmpty()) {
           if (Math.random() < 0.5) {
             if (Math.random() < 0.4)
-              tempSquare.setPiece(new Pawn(Player.WHITE));
+              tempSquare.setPiece(new Pawn(whitePlayer));
             else if (Math.random() < 0.55)
-              tempSquare.setPiece(new Rook(Player.WHITE));
+              tempSquare.setPiece(new Rook(whitePlayer));
             else if (Math.random() < 0.7)
-              tempSquare.setPiece(new Bishop(Player.WHITE));
+              tempSquare.setPiece(new Bishop(whitePlayer));
             else if (Math.random() < 0.85)
-              tempSquare.setPiece(new Knight(Player.WHITE));
+              tempSquare.setPiece(new Knight(whitePlayer));
             else if (Math.random() < 1)
-              tempSquare.setPiece(new Queen(Player.WHITE));
+              tempSquare.setPiece(new Queen(whitePlayer));
           } else {
             if (Math.random() < 0.4)
-              tempSquare.setPiece(new Pawn(Player.BLACK));
+              tempSquare.setPiece(new Pawn(blackPlayer));
             else if (Math.random() < 0.55)
-              tempSquare.setPiece(new Rook(Player.BLACK));
+              tempSquare.setPiece(new Rook(blackPlayer));
             else if (Math.random() < 0.7)
-              tempSquare.setPiece(new Bishop(Player.BLACK));
+              tempSquare.setPiece(new Bishop(blackPlayer));
             else if (Math.random() < 0.85)
-              tempSquare.setPiece(new Knight(Player.BLACK));
+              tempSquare.setPiece(new Knight(blackPlayer));
             else if (Math.random() < 1)
-              tempSquare.setPiece(new Queen(Player.BLACK));
+              tempSquare.setPiece(new Queen(blackPlayer));
           }
         }
       }
@@ -503,29 +521,28 @@ public class Game implements Serializable {
   /**
    * Prints all allowed Moves for a Colour at a Situation, where the given Colour is not check.
    *
-   * @param colour
    * @throws Exception
    */
   @SuppressWarnings("unchecked")
-  public void printAllMovesForColourNotCheck(String colour) throws Exception {
-    ArrayList moves = MoveUtil.moveArrayByColour(this.board, colour);
+  public void printAllMovesForColourNotCheck(Player player) throws Exception {
+    ArrayList moves = MoveUtil.getMovesForPlayer(board, player);
     System.out.println("\n=========================================================================");
     System.out.println("\n	A List Of Allowed Moves (" + moves.size() + "):\n");
     for (int i = 0; i < moves.size(); i++) {
       Move currentMove = (Move) moves.get(i);
-      System.out.println("	" + currentMove.getStartSquare().getCharRow() + "" + currentMove.getStartSquare().getIntColumn() + " -> " + currentMove.getDestinationSquare().getCharRow() + "" + currentMove.getDestinationSquare().getIntColumn() + " (" + currentMove.getStartSquare().getType() + ")");
+      System.out.println("	" + currentMove.getFrom().getCharRow() + "" + currentMove.getFrom().getIntColumn() + " -> " + currentMove.getTo().getCharRow() + "" + currentMove.getTo().getIntColumn());
     }
   }
 
   @SuppressWarnings("unchecked")
-  public String printAllMovesForColourNotCheckToString(String colour) throws Exception {
+  public String printAllMovesForColourNotCheckToString(Player player) throws Exception {
     String movesString = "";
-    ArrayList moves = MoveUtil.moveArrayByColour(this.board, colour);
+    ArrayList moves = MoveUtil.getMovesForPlayer(board, player);
     //movesString = movesString+("\n=========================================================================\n\n");
     //movesString = movesString+("A List Of Allowed Moves ("+moves.size()+"):\n\n");
     for (int i = 0; i < moves.size(); i++) {
       Move currentMove = (Move) moves.get(i);
-      movesString = movesString + ("" + currentMove.getStartSquare().getCharRow() + "" + currentMove.getStartSquare().getIntColumn() + " -> " + currentMove.getDestinationSquare().getCharRow() + "" + currentMove.getDestinationSquare().getIntColumn() + " (" + currentMove.getStartSquare().getType() + ")\n");
+      movesString = movesString + ("" + currentMove.getFrom().getCharRow() + "" + currentMove.getFrom().getIntColumn() + " -> " + currentMove.getTo().getCharRow() + "" + currentMove.getTo().getIntColumn() + "\n");
     }
     return movesString;
   }
@@ -574,13 +591,11 @@ public class Game implements Serializable {
   /**
    * Prints a list of all Fields a Colour is actually allowed to move.
    *
-   * @param colour
+   * @param player
    * @throws Exception
    */
-  public void printListOfActuallyAllowedFieldsToMoveByColour(String colour)
-          throws Exception {
-    Moves.printListOfActuallyAllowedFieldsToMoveByColour(colour, this.getBoard()
-            .getSquares());
+  public void printListOfActuallyAllowedFieldsToMoveByColour(Player player) throws Exception {
+    Moves.printListOfActuallyAllowedFieldsToMoveByColour(player, board);
   }
 
   /**
@@ -610,13 +625,13 @@ public class Game implements Serializable {
   /**
    * Prints a List of Figures giving check to the given Colour.
    *
-   * @param colour
+   * @param player
    * @throws Exception
    */
-  public void printListOfFiguresGivingCheckToColour(String colour)
+  public void printListOfFiguresGivingCheckToColour(Player player)
           throws Exception {
     printPlayingField();
-    OutputUtil.printListOfFiguresGivingCheckToColour(colour, this.getBoard());
+    OutputUtil.printListOfFiguresGivingCheckToColour(player, this.getBoard());
   }
 
   /**
@@ -624,11 +639,11 @@ public class Game implements Serializable {
    * <p>
    * Considers if the King is check.
    *
-   * @param colour
+   * @param player
    * @throws Exception
    */
-  public void printListOfMovesAllowedForColour(Player player) throws Exception {
-    if (GameUtil.isGivenColourCheck(player, board)) {
+  public void printListOfMovesAllowedForPlayer(Player player) throws Exception {
+    if (player.isCheck()) {
       printMovesAllowedAtACheckedSituation(player);
     } else {
       printAllMovesForColourNotCheck(player);
@@ -638,7 +653,7 @@ public class Game implements Serializable {
 
   public String printListOfMovesAllowedForColourToString(Player player) throws Exception {
     String moves = "";
-    if (GameUtil.isGivenColourCheck(player, board)) {
+    if (player.isCheck()) {
       moves = moves + printMovesAllowedAtACheckedSituationToString(player);
     } else {
       moves = moves + printAllMovesForColourNotCheckToString(player);
@@ -664,7 +679,7 @@ public class Game implements Serializable {
   /**
    * Prints a List of Moves that are allowed at a Check-Situation
    *
-   * @param colour
+   * @param player
    * @throws Exception
    */
   public void printMovesAllowedAtACheckedSituation(Player player) throws Exception {
@@ -675,10 +690,10 @@ public class Game implements Serializable {
     System.out.println("	You Are Check, Therefore Your Allowed Moves Are Limited To The Following:\n");
     for (int i = 0; i < moves.size(); i++) {
       Move currentMove = (Move) moves.get(i);
-      Square currentStart = currentMove.getStartSquare();
-      Square currentDestination = currentMove.getDestinationSquare();
+      Square currentStart = currentMove.getFrom();
+      Square currentDestination = currentMove.getTo();
 
-      System.out.println("" + currentStart.getCharRow() + "" + currentStart.getIntColumn() + " -> " + currentDestination.getCharRow() + "" + currentDestination.getIntColumn() + " (" + currentStart.getType() + ")");
+      System.out.println("" + currentStart.getCharRow() + "" + currentStart.getIntColumn() + " -> " + currentDestination.getCharRow() + "" + currentDestination.getIntColumn());
     }
   }
 
@@ -688,10 +703,10 @@ public class Game implements Serializable {
     movesString = movesString + ("You Are Check!\nTherefore your allowed\nMoves are limited to:\n\n");
     for (int i = 0; i < moves.size(); i++) {
       Move currentMove = (Move) moves.get(i);
-      Square currentStart = currentMove.getStartSquare();
-      Square currentDestination = currentMove.getDestinationSquare();
+      Square currentStart = currentMove.getFrom();
+      Square currentDestination = currentMove.getTo();
 
-      movesString = movesString + ("" + currentStart.getCharRow() + "" + currentStart.getIntColumn() + " -> " + currentDestination.getCharRow() + "" + currentDestination.getIntColumn() + " (" + currentStart.getType() + ")\n");
+      movesString = movesString + ("" + currentStart.getCharRow() + "" + currentStart.getIntColumn() + " -> " + currentDestination.getCharRow() + "" + currentDestination.getIntColumn()+"\n");
     }
     return movesString;
   }
@@ -703,7 +718,7 @@ public class Game implements Serializable {
    */
   public void printPlayingField() throws Exception {
 
-    System.out.println("\n\n============================= " + getBoard().getMovesCounter()
+    System.out.println("\n\n============================= " + getMovesCounter()
             + ". Move ===================================");
     System.out.print("                                                          � Markus Ziller");
     PrintPlayingField.printCurrentSituation(this.getBoard());
@@ -733,7 +748,7 @@ public class Game implements Serializable {
   public String printPlayingFieldString() throws Exception {
     String rep = "";
 
-    rep = (rep + "\n\n============================= " + getBoard().getMovesCounter()
+    rep = (rep + "\n\n============================= " + getMovesCounter()
             + ". Move ===================================\n");
     rep = (rep + "                                                          � Markus Ziller\n\n\n");
     rep = (rep + PrintPlayingField.printCurrentSituationString(this.getBoard()));
@@ -778,11 +793,11 @@ public class Game implements Serializable {
       String choice = scanner.next();
       if (choice.equals("0")) {
         System.out.println();
-        this.printListOfMovesAllowedForColour("white");
+        this.printListOfMovesAllowedForPlayer(whitePlayer);
         System.out.println();
       } else if (choice.equals("1")) {
         System.out.println();
-        this.printPlayingFieldAndMarkMovesForKing("white");
+        this.printPlayingFieldAndMarkMovesForKing(whitePlayer);
         System.out.println();
       } else if (choice.equals("2")) {
         System.out.println();
@@ -843,33 +858,33 @@ public class Game implements Serializable {
    * <p>
    * checked 10.4
    *
-   * @param input = "a3", "B2"... for a board and "white" or "black" for a colour
+   * @param player = "a3", "B2"... for a board and "white" or "black" for a colour
    * @throws Exception
    */
-  public void printPlayingField(String input) throws Exception {
+  public void printPlayingField(Player player) throws Exception {
     int[] fieldHelp;
     Square[][] square2 = getBoard().getSquares();
-    if (input.equals("white") || input.equals("black")) {
+    if (player.equals("white") || player.equals("black")) {
       System.out
               .println("\n=========================================================================");
       System.out.print("                                                          � Markus Ziller");
       PrintPlayingField
               .printCurrentSituationAndMarkPossibleFieldsForColour(
-                      this.getBoard(), input);
+                      this.getBoard(), player);
     } else {
-      fieldHelp = ChessNotationUtil.convertFieldNameToIndexes(input);
+      fieldHelp = ChessNotationUtil.convertFieldNameToIndexes(player);
 
       if (!square2[fieldHelp[0]][fieldHelp[1]].isEmpty()) {
         System.out.println("\n\n============================= "
-                + getBoard().getMovesCounter()
+                + getMovesCounter()
                 + ". Move ===================================");
         System.out.print("                                                          � Markus Ziller");
         PrintPlayingField.printCurrentSituationAndMarkPossibleFields(
-                this.getBoard(), input);
+                this.getBoard(), player);
       } else {
         System.out
                 .println("	No figure on "
-                        + input
+                        + player
                         + ".\n	Therefore no reachable fields have been printed");
         printPlayingField();
       }
@@ -882,11 +897,10 @@ public class Game implements Serializable {
    * <p>
    * checked 10.4
    *
-   * @param colour = "white" or "black"
    * @throws Exception
    */
-  public void printPlayingFieldAndMarkMovesForKing(String colour) throws Exception {
-    Square kingSquare = BoardUtil.getKingFieldByColour(colour, this.board);
+  public void printPlayingFieldAndMarkMovesForKing(Player player) throws Exception {
+    Square kingSquare = player.isWhite() ? board.getWhiteKingSquare() : board.getBlackKingSquare();
     char s = kingSquare.getCharRow();
     int k = kingSquare.getIntColumn();
     String i = ("" + s + "" + k);
@@ -937,19 +951,19 @@ public class Game implements Serializable {
 
     //this.printPlayingField();
 
-    this.printPlayingField("white");
-    this.printPlayingField("black");
-    this.printListOfFiguresGivingCheckToColour("white");
-    this.printListOfFiguresGivingCheckToColour("black");
-    this.printListOfMovesAllowedForColour("white");
-    this.printListOfMovesAllowedForColour("black");
-    this.printListOfActuallyAllowedFieldsToMoveByColour("white");
-    this.printListOfActuallyAllowedFieldsToMoveByColour("black");
+    printPlayingField(whitePlayer);
+    printPlayingField(blackPlayer);
+    printListOfFiguresGivingCheckToColour(whitePlayer);
+    printListOfFiguresGivingCheckToColour(blackPlayer);
+    printListOfMovesAllowedForPlayer(whitePlayer);
+    printListOfMovesAllowedForPlayer(blackPlayer);
+    printListOfActuallyAllowedFieldsToMoveByColour(whitePlayer);
+    printListOfActuallyAllowedFieldsToMoveByColour(blackPlayer);
     //this.printIsCheck("white");
     //this.printIsCheck("black");
-    this.printPlayingFieldAndMarkMovesForKing("white");
-    this.printPlayingFieldAndMarkMovesForKing("black");
-    this.printPlayingField();
+    printPlayingFieldAndMarkMovesForKing(whitePlayer);
+    printPlayingFieldAndMarkMovesForKing(blackPlayer);
+    printPlayingField();
   }
 
   /**
@@ -958,11 +972,8 @@ public class Game implements Serializable {
    * @param filename
    */
   public void saveSituation(String filename) {
-
     try {
       PersistenceUtil.saveGame(this, filename);
-
-
     } catch (Exception e) {
     }
 
@@ -985,7 +996,7 @@ public class Game implements Serializable {
    * @return
    * @throws Exception
    */
-  @SuppressWarnings("unchecked")
+
   public boolean isValidMoveInACheckedSituation(Square from, Square to) throws Exception {
     Player player = from.getPiece().getPlayer();
     Move moveToBeChecked = new Move(from, to);
@@ -994,7 +1005,7 @@ public class Game implements Serializable {
     boolean contains = false;
     for (int i = 0; i < validMoves.size(); i++) {
       Move currentMove = (Move) validMoves.get(i);
-      if (currentMove.getStartSquare().equals(from) && currentMove.getDestinationSquare().equals(to))
+      if (currentMove.getFrom().equals(from) && currentMove.getTo().equals(to))
         return true;
 
     }

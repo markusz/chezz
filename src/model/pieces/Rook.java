@@ -1,13 +1,17 @@
 package model.pieces;
 
+import model.Move;
+import model.Player;
 import model.Square;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class Rook extends AbstractPiece {
 
-  public Rook(int identifier){
-
+  public Rook(Player player){
+    super(player);
+    textualRepresentation = "R";
   }
 
     /**
@@ -37,8 +41,7 @@ public class Rook extends AbstractPiece {
                 moves.add(square[row + 1][column]);
                 row++;
             } else {
-                if (!square[row + 1][column].getPiece().getColour().equals(colour)
-                        && !square[row + 1][column].getPiece().getType().equals("king")) {
+                if (!square[row + 1][column].getPiece().getColour().equals(colour) && !square[row + 1][column].getPiece().getType().equals("king")) {
                     moves.add(square[row + 1][column]);
                     break;
                 } else
@@ -302,6 +305,11 @@ public class Rook extends AbstractPiece {
   }
 
   @Override
+  public Player getPlayer() {
+    return null;
+  }
+
+  @Override
   public boolean hasBeenMoved() {
     return false;
   }
@@ -309,6 +317,31 @@ public class Rook extends AbstractPiece {
   @Override
   public void setHasBeenMoved(boolean hasBeenMoved) {
 
+  }
+
+  @Override
+  public Set<Square> getAllThreatenedSquares() {
+    return null;
+  }
+
+  @Override
+  public Set<Move> getAllMoves() {
+    return null;
+  }
+
+  @Override
+  public Set<Move> getAllNormalMoves() {
+    return null;
+  }
+
+  @Override
+  public Set<Move> getAllCapturingMoves() {
+    return null;
+  }
+
+  @Override
+  public Set<Move> getAllOtherMoves() {
+    return null;
   }
 
   @Override

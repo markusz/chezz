@@ -303,5 +303,4 @@ public class Moves {
     System.out.print('\n');
 
   }
-
 }

@@ -15,6 +15,7 @@ public class Main {
     Game game = new Game(true, false, true);
     GUI gui = new GUI(game);
 
+    System.out.println(!true ^ true);
 
 		/*while (true) {
             //String infoMsg = "2";
@@ -187,7 +188,7 @@ public class Main {
    * Feldern aus, auf denen Figuren stehen die dem K�nig der eingegebenen
    * Farbe Schach geben.
    * --------------------------------------------------------------------
-   * # .printListOfMovesAllowedForColour(Farbe) - Gibt eine Liste aller
+   * # .printListOfMovesAllowedForPlayer(Farbe) - Gibt eine Liste aller
    * m�glichen Z�ge f�r die gegebene Farbe aus.
    * --------------------------------------------------------------------
    * # .printListOfThreatenedFieldsByColour(Farbe) - Gibt eine Liste aller

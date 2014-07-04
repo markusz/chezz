@@ -1,13 +1,15 @@
 package model.pieces;
 
+import model.Player;
 import model.Square;
 
 import java.util.ArrayList;
 
 public class Knight extends AbstractPiece{
 
-  public Knight(int identifier){
-
+  public Knight(Player player){
+    super(player);
+    textualRepresentation = "k";
   }
 
     @SuppressWarnings("unchecked")

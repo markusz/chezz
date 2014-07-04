@@ -1,5 +1,6 @@
 package model.pieces;
 
+import model.Player;
 import model.Square;
 import utils.MoveUtil;
 
@@ -7,8 +8,9 @@ import java.util.ArrayList;
 
 public class King extends AbstractPiece{
 
-  public King(int identifier){
-
+  public King(Player player){
+    super(player);
+    textualRepresentation = "K";
   }
 
     /**

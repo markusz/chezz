@@ -1,16 +1,18 @@
 package model.pieces;
 
+import model.Move;
 import model.Player;
 import model.Square;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class Bishop extends AbstractPiece {
 
-  private int type;
 
-  public Bishop(int type) {
-    this.type = type;
+  public Bishop(Player player){
+    super(player);
+    textualRepresentation = "B";
   }
 
   /**
@@ -431,8 +433,6 @@ public class Bishop extends AbstractPiece {
     return null;
   }
 
-  @Override
-
 
   @Override
   public boolean hasBeenMoved() {
@@ -442,5 +442,30 @@ public class Bishop extends AbstractPiece {
   @Override
   public void setHasBeenMoved(boolean hasBeenMoved) {
 
+  }
+
+  @Override
+  public Set<Square> getAllThreatenedSquares() {
+    return null;
+  }
+
+  @Override
+  public Set<Move> getAllMoves() {
+    return null;
+  }
+
+  @Override
+  public Set<Move> getAllNormalMoves() {
+    return null;
+  }
+
+  @Override
+  public Set<Move> getAllCapturingMoves() {
+    return null;
+  }
+
+  @Override
+  public Set<Move> getAllOtherMoves() {
+    return null;
   }
 }

@@ -60,8 +60,8 @@ public class MoveUtil {
         boolean contains = false;
         for (int i = 0; i < validMoves.size(); i++) {
             Move currentMove = (Move) validMoves.get(i);
-            if (currentMove.getStartSquare().equals(startSquare)
-                    && currentMove.getDestinationSquare().equals(
+            if (currentMove.getFrom().equals(startSquare)
+                    && currentMove.getTo().equals(
                     destinationField_Square))
                 contains = true;
 
@@ -79,7 +79,7 @@ public class MoveUtil {
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList moveArrayByColour(Board field, String colour)
+    public static ArrayList getMovesForPlayer(Board field, Player player)
             throws Exception {
 
         Square[][] squareArray = field.getSquares();
@@ -271,14 +271,14 @@ public class MoveUtil {
             defenderColour = "black";
 
         ArrayList movesAvoiding = new ArrayList();
-        ArrayList movesAllowedForDefender = moveArrayByColour(field,
+        ArrayList movesAllowedForDefender = getMovesForPlayer(field,
                 defenderColour);
         ArrayList fieldsBetweenAttackerAndKing = BoardUtil.listOfFieldsBetweenAttackerAndKing(
                 attacker, field);
 
         for (int i = 0; i < movesAllowedForDefender.size(); i++) {
             Move currentMove = (Move) movesAllowedForDefender.get(i);
-            Square currentSquare = currentMove.getDestinationSquare();
+            Square currentSquare = currentMove.getTo();
             if (fieldsBetweenAttackerAndKing.contains(currentSquare))
                 movesAvoiding.add(currentMove);
         }
@@ -321,13 +321,13 @@ public class MoveUtil {
     @SuppressWarnings("unchecked")
     public static ArrayList listOfMovesToThrowAttacker(String colour,
                                                        Board field) throws Exception {
-        ArrayList moveArray = moveArrayByColour(field, colour);
+        ArrayList moveArray = getMovesForPlayer(field, colour);
         ArrayList figuresGivingCheck = GameUtil.figuresGivingCheckToColour(colour, field);
         ArrayList allowedMoves = new ArrayList();
 
         for (int i = 0; i < moveArray.size(); i++) {
             Move currentMove = (Move) moveArray.get(i);
-            Square currentDestinationSquare = currentMove.getDestinationSquare();
+            Square currentDestinationSquare = currentMove.getTo();
             if (figuresGivingCheck.contains(currentDestinationSquare))
                 allowedMoves.add(currentMove);
         }

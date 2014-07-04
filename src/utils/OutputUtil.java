@@ -20,7 +20,7 @@ public class OutputUtil {
     @SuppressWarnings("unchecked")
     public static void printAllAllowedMovesByColour(Board field, String colour)
             throws Exception {
-        ArrayList moveArrayList = MoveUtil.moveArrayByColour(field, colour);
+        ArrayList moveArrayList = MoveUtil.getMovesForPlayer(field, colour);
         System.out
                 .println("\n\n=========================================================================");
         System.out.println("\n	List of possible Moves (" + moveArrayList.size() + ") for " + colour + ":\n");
@@ -40,11 +40,11 @@ public class OutputUtil {
      * @throws Exception
      */
     public static void printMove(Move move) throws Exception {
-        System.out.println("	" + move.getStartSquare().getCharRow() + ""
-                + move.getStartSquare().getIntColumn() + " -> "
-                + move.getDestinationSquare().getCharRow() + ""
-                + move.getDestinationSquare().getIntColumn() + "  ("
-                + move.getStartSquare().getPiece().getType() + ")");
+        System.out.println("	" + move.getFrom().getCharRow() + ""
+                + move.getFrom().getIntColumn() + " -> "
+                + move.getTo().getCharRow() + ""
+                + move.getTo().getIntColumn() + "  ("
+                + move.getFrom().getPiece().getType() + ")");
     }
 
     /**
@@ -113,10 +113,10 @@ public class OutputUtil {
                 attacker, field);
         for (int i = 0; i < moves.size(); i++) {
             Move currentMove = (Move) moves.get(i);
-            System.out.println(currentMove.getStartSquare().getCharRow() + ""
-                    + currentMove.getStartSquare().getIntColumn() + " -> "
-                    + currentMove.getDestinationSquare().getCharRow() + ""
-                    + currentMove.getDestinationSquare().getIntColumn());
+            System.out.println(currentMove.getFrom().getCharRow() + ""
+                    + currentMove.getFrom().getIntColumn() + " -> "
+                    + currentMove.getTo().getCharRow() + ""
+                    + currentMove.getTo().getIntColumn());
         }
     }
 }

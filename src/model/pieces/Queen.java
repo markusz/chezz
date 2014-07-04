@@ -8,8 +8,9 @@ import java.util.ArrayList;
 
 public class Queen extends AbstractPiece {
 
-  public Queen(int identifier) {
-
+  public Queen(Player player){
+    super(player);
+    textualRepresentation = "Q";
   }
 
   /**
