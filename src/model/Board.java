@@ -200,7 +200,7 @@ Player white = game.getWhitePlayer();
     }
   }
 
-  private Square getSquareNColumnsStraightToTheRight(Square start, int n, int boardOrientation) throws SquareNotFoundException {
+  public Square getSquareNColumnsStraightToTheRight(Square start, int n, int boardOrientation) throws SquareNotFoundException {
     try {
       return squares[start.getRowIndex()][start.getColumnIndex() + (boardOrientation * n)];
     } catch (ArrayIndexOutOfBoundsException e) {
@@ -208,7 +208,7 @@ Player white = game.getWhitePlayer();
     }
   }
 
-  private Square getSquareNColumnsStraightToTheLeft(Square start, int n, int boardOrientation) throws SquareNotFoundException {
+  public Square getSquareNColumnsStraightToTheLeft(Square start, int n, int boardOrientation) throws SquareNotFoundException {
     try {
       return squares[start.getRowIndex()][start.getColumnIndex() - (boardOrientation * n)];
     } catch (ArrayIndexOutOfBoundsException e) {
@@ -216,7 +216,7 @@ Player white = game.getWhitePlayer();
     }
   }
 
-  private Square getSquareNRowsMColumnsAway(Square start, int n, int m, int boardOrientation) throws SquareNotFoundException {
+  public Square getSquareNRowsMColumnsAway(Square start, int n, int m, int boardOrientation) throws SquareNotFoundException {
     try {
       return squares[start.getRowIndex()+ (boardOrientation * n)][start.getColumnIndex() + (boardOrientation * m)];
     } catch (ArrayIndexOutOfBoundsException e) {

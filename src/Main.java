@@ -151,14 +151,14 @@ public class Main {
    * --------------------------------------------------------------------
    * # .runTests() - f�hrt folgende Befehle auf das aktuelle Spiel aus:
    *
-   * .printPlayingField(); .printAllPossibleMovesForColour("white");
+   * .printBoard(); .printAllPossibleMovesForColour("white");
    * .printAllPossibleMovesForColour("black");
-   * .printPlayingField("white"); .printPlayingField("black");
+   * .printBoard("white"); .printBoard("black");
    * .printListOfFiguresGivingCheckToColour("white");
    * .printListOfFiguresGivingCheckToColour("black");
    * .printListOfThreatenedFieldsByColour("white");
    * .printListOfThreatenedFieldsByColour("black");
-   * .printIsCheck("white"); .printIsCheck("black"); .printPlayingField();
+   * .printIsCheck("white"); .printIsCheck("black"); .printBoard();
    * --------------------------------------------------------------------
    * # .setPiece(feld, art, farbe) - F�gt eine die eingegebene Figur auf
    * das gegebene Feld ein. FieldManipulationAllowed muss true sein

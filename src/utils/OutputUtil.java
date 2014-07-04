@@ -1,6 +1,7 @@
 package utils;
 
 import model.Board;
+import model.Player;
 import model.Square;
 import model.Move;
 
@@ -10,20 +11,21 @@ import java.util.ArrayList;
  * Created by Markus on 28.06.2014.
  */
 public class OutputUtil {
-    /**
+  private static String emptyField = "   |";
+  private static String possibleField = " x |";
+  private static String possibleFieldThrow = " + |";
+
+  /**
      * Prints all allowed moves for a colour.
-     *
-     * @param field
-     * @param colour
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    public static void printAllAllowedMovesByColour(Board field, String colour)
+    public static void printAllAllowedMovesByPlayer(Board board, Player player)
             throws Exception {
-        ArrayList moveArrayList = MoveUtil.getMovesForPlayer(field, colour);
+        ArrayList moveArrayList = MoveUtil.getMovesForPlayer(board, player);
         System.out
                 .println("\n\n=========================================================================");
-        System.out.println("\n	List of possible Moves (" + moveArrayList.size() + ") for " + colour + ":\n");
+        System.out.println("\n	List of possible Moves (" + moveArrayList.size() + ") for " + player + ":\n");
 
         for (int i = 0; i < moveArrayList.size(); i++) {
             printMove((Move) moveArrayList.get(i));
@@ -44,7 +46,7 @@ public class OutputUtil {
                 + move.getFrom().getIntColumn() + " -> "
                 + move.getTo().getCharRow() + ""
                 + move.getTo().getIntColumn() + "  ("
-                + move.getFrom().getPiece().getType() + ")");
+                + move.getFrom().getPiece() + ")");
     }
 
     /**
@@ -119,4 +121,29 @@ public class OutputUtil {
                     + currentMove.getTo().getIntColumn());
         }
     }
+
+  public static void printBoard(Board board) {
+    System.out.println(getCurrentGameSituationAsString(board));
+  }
+
+  public static String getCurrentGameSituationAsString(Board field) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("      	     A     B     C     D     E     F     G    H\n");
+    for (int i = 0; i < 8; i++) {
+      sb.append("	    |-------------------------------------------------|\n");
+      sb.append("  	" + (8 - i) + "  |");
+      for (int j = 0; j < 8; j++) {
+        if (field.getSquares()[j][i].isEmpty()) {
+          sb.append(emptyField);
+        } else {
+          sb.append(field.getSquares()[j][i].getPiece().getTextualRepresentation());
+        }
+      }
+      sb.append("  " + (8 - i) + "  \n");
+    }
+    sb.append("      	    ------------------------------------------------\n");
+    sb.append("      	     A     B     C     D     E     F     G    H\n\n");
+
+    return sb.toString();
+  }
 }

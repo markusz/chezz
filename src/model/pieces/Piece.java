@@ -17,7 +17,10 @@ public interface Piece {
   public Square getCurrentPositionOnBoard();
   public void setCurrentPositionOnBoard(Square square);
   public void setHasBeenMoved(boolean hasBeenMoved);
+  public boolean isProtectingHisKing();
+  public String getTextualRepresentation();
   public boolean isSameColor(Piece piece);
+  public void updatePossibleMoves();
   public Set<Square> getAllowFieldsToMoveOnto();
   public Set<Square> getAllThreatenedSquares();
   public Set<Move> getAllMoves();

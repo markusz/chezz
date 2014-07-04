@@ -4,19 +4,24 @@ import model.Board;
 import model.Player;
 import model.Square;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Created by Markus on 28.06.2014.
  */
 public abstract class AbstractPiece implements Piece {
-  abstract String getTextualRepresentation();
+  public abstract String getTextualRepresentation();
 
   protected Player player;
   protected Board board;
   protected String textualRepresentation;
   protected Square currentPosition;
+  protected List<Square> threatenedSquares = new ArrayList<>();
+  protected List<Square> moveableSquares = new ArrayList<>();
+
 
   public AbstractPiece(Player player) {
     this.board = board;
