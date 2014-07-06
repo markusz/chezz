@@ -317,4 +317,8 @@ public class BoardUtil {
             throw new Exception("No king fund for " + colour
                     + ". Check Lineup please");
     }
+
+  public static boolean isValidMove(Square from, Square to, Board board) {
+    return from.getPiece().getAllowFieldsToMoveOnto().contains(to);
+  }
 }

@@ -15,8 +15,6 @@ public class Main {
     Game game = new Game(true, false, true);
     GUI gui = new GUI(game);
 
-    System.out.println(!true ^ true);
-
 		/*while (true) {
             //String infoMsg = "2";
 			Scanner scanner = new Scanner(System.in);

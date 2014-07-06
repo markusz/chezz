@@ -24,28 +24,6 @@ public class GameUtil {
           throws Exception {
 
     boolean checkMate = false;
-    Square kingSquare = BoardUtil.getKingFieldByColour(colour, field);
-    int row = kingSquare.getRowIndex();
-    int column = kingSquare.getColumnIndex();
-
-    if ((Moves.listOfActuallyAllowedMoves(row, column, field
-            .getSquares()).isEmpty())) {
-      if (figuresGivingCheckToColour(colour, field).size() > 1) {
-        checkMate = true;
-      } else {
-        if ((figuresGivingCheckToColour(colour, field).size() > 0)) {
-          Square attackingSquare = (Square) figuresGivingCheckToColour(colour, field).get(0);
-          if ((MoveUtil.allowedToThrowAttacker(colour, attackingSquare, field))
-                  || !(MoveUtil.MovesToAvoidCheckMateByBlockingAttackersPath(
-                  attackingSquare, field).isEmpty()))
-            checkMate = false;
-          else
-            checkMate = true;
-        }
-      }
-
-    } else
-      ;
 
     return checkMate;
   }

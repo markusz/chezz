@@ -4,7 +4,6 @@ import model.Square;
 import model.Game;
 import utils.ChessNotationUtil;
 import utils.GameUtil;
-import utils.MoveUtil;
 
 import javax.swing.*;
 import javax.swing.border.Border;

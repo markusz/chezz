@@ -2,7 +2,7 @@ package utils;
 
 public class ChessNotationUtil {
 
-  public static int convertRowCharToIndex(char row) throws Exception {
+  public static int convertColumnLetterToArrayIndex(char row) throws Exception {
     int rowInt;
 
     if (row == 'A' || row == 'a') {
@@ -29,32 +29,36 @@ public class ChessNotationUtil {
   }
 
   public static String convertFieldIndexToChessNotation(int row, int column) {
-    char rowLetter = convertRowIndexToChessNotation(row);
-    int columnNumber = convertColumnIndexToChessNotation(column);
+//    char rowLetter = convertColumnArrayIndexToLetter(row);
+//    int columnNumber = convertRowArrayIndexToRowNumber(column);
 
-    return rowLetter + "" + columnNumber;
+    int rowNumber = convertRowArrayIndexToRowNumber(row);
+    char columnLetter = convertColumnArrayIndexToLetter(column);
+
+    return columnLetter + "" + rowNumber;
   }
 
-  public static char convertRowIndexToChessNotation(int row){
+  public static char convertColumnArrayIndexToLetter(int row){
     return (char) (65 + row);
   }
 
-  public static int convertColumnIndexToChessNotation(int column){
+  public static int convertRowArrayIndexToRowNumber(int column){
     return 8 - column;
   }
 
   public static int[] convertFieldNameToIndexes(String fieldName) throws Exception {
     char[] temp = fieldName.toCharArray();
-    int[] row_column = new int[2];
+    //indexes of row and column
+    int[] indexes = new int[2];
     if (temp.length == 2) {
-      row_column[0] = convertRowCharToIndex(temp[0]);
-      row_column[1] = convertColumnNumberToIndex(temp[1]);
-      return row_column;
+      indexes[0] = convertRowNumberToArrayIndex(temp[1]);
+      indexes[1] = convertColumnLetterToArrayIndex(temp[0]);
+      return indexes;
     }
     throw new Exception(fieldName + " is not a valid input");
   }
 
-  public static int convertColumnNumberToIndex(char row) throws Exception {
+  public static int convertRowNumberToArrayIndex(char row) throws Exception {
     try {
       return 8 - Integer.valueOf(row);
     } catch (Exception e) {

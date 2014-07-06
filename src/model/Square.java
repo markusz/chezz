@@ -20,23 +20,6 @@ public class Square {
 
   private ChessNotation chessNotation;
 
-  private class ChessNotation {
-    private int rowName;
-    private int columnName;
-    private String chessNotationName;
-
-    @Override
-    public String toString() {
-      return this.chessNotationName;
-    }
-
-    public ChessNotation(int rowIndex, int columnIndex) {
-      this.rowName = ChessNotationUtil.convertRowIndexToChessNotation(rowIndex);
-      this.columnName = columnIndex;
-      this.chessNotationName = ChessNotationUtil.convertFieldIndexToChessNotation(rowName, columnIndex);
-    }
-  }
-
   public Square(int rowIndex, int columnIndex, Piece piece) {
     this.rowIndex = rowIndex;
     this.columnIndex = columnIndex;
@@ -58,58 +41,6 @@ public class Square {
 
   public void setColumnIndex(int columnIndex) {
     this.columnIndex = columnIndex;
-  }
-
-  public char getCharRow() throws Exception {
-    char rowChar;
-
-    if (this.rowIndex == 0)
-      rowChar = 'A';
-    else if (this.rowIndex == 1)
-      rowChar = 'B';
-    else if (this.rowIndex == 2)
-      rowChar = 'C';
-    else if (this.rowIndex == 3)
-      rowChar = 'D';
-    else if (this.rowIndex == 4)
-      rowChar = 'E';
-    else if (this.rowIndex == 5)
-      rowChar = 'F';
-    else if (this.rowIndex == 6)
-      rowChar = 'G';
-    else if (this.rowIndex == 7)
-      rowChar = 'H';
-    else
-      throw new Exception(
-              "error in assigning a char to the columns number");
-
-    return rowChar;
-  }
-
-  public int getIntColumn() throws Exception {
-    int intColumn;
-
-    if (this.columnIndex == 0)
-      intColumn = 8;
-    else if (this.columnIndex == 1)
-      intColumn = 7;
-    else if (this.columnIndex == 2)
-      intColumn = 6;
-    else if (this.columnIndex == 3)
-      intColumn = 5;
-    else if (this.columnIndex == 4)
-      intColumn = 4;
-    else if (this.columnIndex == 5)
-      intColumn = 3;
-    else if (this.columnIndex == 6)
-      intColumn = 2;
-    else if (this.columnIndex == 7)
-      intColumn = 1;
-    else
-      throw new Exception(
-              "error in assigning a char to the columns number");
-
-    return intColumn;
   }
 
   public boolean isEmpty() {

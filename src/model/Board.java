@@ -2,8 +2,8 @@ package model;
 
 import exceptions.SquareNotFoundException;
 import model.pieces.*;
+import utils.BoardUtil;
 import utils.ChessNotationUtil;
-import utils.MoveUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,46 +43,9 @@ public class Board {
     }
   }
 
-
-  /**
-   * marks every attacked field for both colours, regardless of the colour actually being allowed to move there.
-   * i.e the white king on E3 and a black rook on D7. Although the king on E3 is not allowed to move on any D-Row field because of the rook on D7.
-   * Nevertheless a black king on C3 would also not be allowed to move on any D-Row field because of the E3 King.
-   * <p>
-   * So this method is used in the king class to determine by the king class whether a move on a empty field is valid
-   */
-  @SuppressWarnings("unchecked")
-  public void markAttackedFields() throws Exception {
-    ArrayList fieldsThreatenedByWhite = MoveUtil.threatenedFieldsByColourConsideringEveryAttackedField("white", squares);
-    ArrayList fieldsThreatenedByBlack = MoveUtil.threatenedFieldsByColourConsideringEveryAttackedField("black", squares);
-
-    for (Square square : iterableSqaures) {
-      square.setThreatendByWhite(fieldsThreatenedByWhite.contains(square));
-      square.setThreatendByBlack(fieldsThreatenedByBlack.contains(square));
-    }
-  }
-
   public void setPiece(Square square, Piece piece) throws Exception {
     square.setPiece(piece);
     piece.setCurrentPositionOnBoard(square);
-  }
-
-  /**
-   * removes the figure on the current field
-   * if the field is empty, an error message is printed
-   *
-   * @param field
-   * @throws Exception
-   */
-  public void removeFigureInterface(String field)
-          throws Exception {
-    int[] fieldArray = ChessNotationUtil.convertFieldNameToIndexes(field);
-    if (!this.squares[fieldArray[0]][fieldArray[1]].isEmpty())
-      this.squares[fieldArray[0]][fieldArray[1]].setEmpty();
-    else
-      System.out
-              .println("	No figure on " + field + ".\n 	Therefore no figure has been removed from "
-                      + field + "\n\n");
   }
 
   public Square[][] getSquares() {
@@ -93,24 +56,9 @@ public class Board {
     return this.squares[row][col];
   }
 
-  @SuppressWarnings("unchecked")
-  public ArrayList threatendFieldsByWhite() throws Exception {/*unused*/
-
-    return MoveUtil.threatendFieldsByActuallyAllowedMoves("white", squares);
-
-  }
-
-  @SuppressWarnings("unchecked")
-  public ArrayList threatendFieldsByBlack() throws Exception {/*unused*/
-
-    return MoveUtil.threatendFieldsByActuallyAllowedMoves("black", squares);
-
-  }
-
-  public Square getSquare(String nameInChessNotation){
+  public Square getSquare(String nameInChessNotation) {
     return squareMap.get(nameInChessNotation);
   }
-
 
   public Square getBlackKingSquare() {
     return blackKingSquare;
@@ -126,8 +74,8 @@ public class Board {
    * @throws Exception
    */
   public void createInitialLineup() throws Exception {
-Player black = game.getBlackPlayer();
-Player white = game.getWhitePlayer();
+    Player black = game.getBlackPlayer();
+    Player white = game.getWhitePlayer();
 
     setPiece(getSquare("A8"), new Rook(black));
     setPiece(getSquare("B8"), new Knight(black));
@@ -175,7 +123,7 @@ Player white = game.getWhitePlayer();
       throw new Exception("Invalid Move: " + from.getChessNotation() + " is Empty");
     }
 
-    if (MoveUtil.isValidMove(from, to, this)) {
+    if (BoardUtil.isValidMove(from, to, this)) {
       to.setPiece(from.getPiece());
       from.setEmpty();
       from.getPiece().setHasBeenMoved(true);
@@ -186,7 +134,6 @@ Player white = game.getWhitePlayer();
   }
 
   /**
-   *
    * @param start
    * @param n
    * @param boardOrientation -1 for black player, 1 for white
@@ -218,9 +165,13 @@ Player white = game.getWhitePlayer();
 
   public Square getSquareNRowsMColumnsAway(Square start, int n, int m, int boardOrientation) throws SquareNotFoundException {
     try {
-      return squares[start.getRowIndex()+ (boardOrientation * n)][start.getColumnIndex() + (boardOrientation * m)];
+      return squares[start.getRowIndex() + (boardOrientation * n)][start.getColumnIndex() + (boardOrientation * m)];
     } catch (ArrayIndexOutOfBoundsException e) {
       throw new SquareNotFoundException();
     }
+  }
+
+  public boolean isSquareAttackedByOpponentOf(Square to, Player player) {
+    return player.isWhite() ? attackedByBlack.contains(to) : attackedByWhite.contains(to);
   }
 }

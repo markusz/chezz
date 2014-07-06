@@ -1,13 +1,10 @@
 package model.pieces;
 
-import model.Board;
-import model.Move;
+import exceptions.SquareNotFoundException;
 import model.Player;
 import model.Square;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Pawn extends AbstractPiece {
 
@@ -17,248 +14,67 @@ public class Pawn extends AbstractPiece {
   }
 
   @Override
-  public Set<Square> getAllThreatenedSquares() {
-    return null;
-  }
-
-  @Override
-  public Set<Move> getAllMoves() {
-    return null;
-  }
-
-  @Override
-  public Set<Move> getAllNormalMoves() {
+  public void updatePossibleMoves() {
     int m = getPlayer().getBoardModifier();
     Square c = getCurrentPositionOnBoard();
 
-    Set<Move> moves = new HashSet<>();
-    Square oneSquareAhead = board.getSquareNRowsAhead(c, 1, m);
-    Square twoSquaresAhead = board.getSquareNRowsAhead(c, 2, m);
 
-    //TODO bedingung
-    if (!hasBeenMoved() && oneSquareAhead.isEmpty()) {
-      moves.add(new Move(c, oneSquareAhead, Move.NORMAL));
-      if(twoSquaresAhead.isEmpty()){
-        moves.add(new Move(c, twoSquaresAhead, Move.NORMAL));
+    updateNormalMoves(m, c);
+    updateAttackMoves(m, c);
+  }
+
+  private void updateAttackMoves(int m, Square c) {
+    //Little math trick to avoid unnecessary if's. Background Info: White (black) needs to be on row 5 (4) to capure en passant
+    //Detemine with board orientation
+    //white: 2 * 5 - (+1) = 9
+    //black: 2 * 4 - (-1) = 9
+    Player playingPlayer = currentPosition.getPiece().getPlayer();
+    boolean pieceIsOnRequiredRowForEnPassant = 2 * currentPosition.getChessNotation().getRowNumber() - playingPlayer.getBoardModifier() == 9;
+
+    try {
+      Square squareLeftAcross = board.getSquareNRowsMColumnsAway(currentPosition, 1, -1, player.getBoardModifier());
+      Square squareToLeft = board.getSquareNRowsMColumnsAway(currentPosition, 0, -1, player.getBoardModifier());
+
+      //TODO add to threatened squares
+      if (!squareLeftAcross.isEmpty() && canValidlyCapturePiece(squareLeftAcross.getPiece())) {
+        //TODO can capture
       }
-    }
-
-    return moves;
-  }
-
-  @Override
-  public Set<Move> getAllCapturingMoves() {
-    return null;
-  }
-
-  @Override
-  public Set<Move> getAllOtherMoves() {
-    return null;
-  }
-
-  /**
-   * adds a field if the pawn is actually allowed to throw by the rules for pawn movement
-   * and considering the fact that a king can not be thrown.
-   *
-   * @param row
-   * @param column
-   * @param colour
-   * @param square
-   * @return
-   */
-  @SuppressWarnings("unchecked")
-  public static ArrayList addFieldIfPawnIsActuallyAllowedToCapture(int row, int column, String colour,
-                                                                   Square[][] square) {
-
-    ArrayList temp = new ArrayList();
-
-    if (!(row < 0 || column < 0 || row > 7 || column > 7))
-      if (square[row][column].isEmpty()) {
-        ;
-      } else {
-        if (!square[row][column].getPiece().getColour().equals(colour) && !square[row][column].getPiece().getType().equals("king")) {
-          temp.add(square[row][column]);
-
-        } else
-          ;
+      if(pieceIsOnRequiredRowForEnPassant && !isProtectingHisKing() && squareLeftAcross.isEmpty() && !squareToLeft.getPiece().isSameColor(this) && (squareToLeft.getPiece() instanceof Pawn)){
+        //TODO can capture en passant
       }
-    return temp;
+    } catch (SquareNotFoundException e) {/*fail silently*/}
 
-  }
+    try {
+      Square squareRightAcross = board.getSquareNRowsMColumnsAway(currentPosition, 1, 1, player.getBoardModifier());
+      Square squareToRight = board.getSquareNRowsMColumnsAway(currentPosition, 0, 1, player.getBoardModifier());
 
-  /**
-   * adds a field if the pawn is allowed to move to it, de facto, if the field is empty
-   *
-   * @param row
-   * @param column
-   * @param colour
-   * @param square
-   * @return
-   */
-  @SuppressWarnings("unchecked")
-  public static ArrayList addFieldIfPawnIsActuallyAllowedToMove(int row, int column, String colour,
-                                                                Square[][] square) {
-
-    ArrayList temp = new ArrayList();
-
-    if (!(row < 0 || column < 0 || row > 7 || column > 7))
-      if (square[row][column].isEmpty()) {
-        temp.add(square[row][column]);
+      //TODO add to threatened squares
+      if (!squareRightAcross.isEmpty() && canValidlyCapturePiece(squareRightAcross.getPiece())) {
+        //TODO can capture
       }
-    return temp;
-
+      if(pieceIsOnRequiredRowForEnPassant && !isProtectingHisKing() && squareRightAcross.isEmpty() && !squareToRight.getPiece().isSameColor(this) && (squareToRight.getPiece() instanceof Pawn)){
+        //TODO can capture en passant
+      }
+    } catch (SquareNotFoundException e) {/*fail silently*/}
   }
 
-
-  /**
-   * adds a field if a pawn threateneds it
-   *
-   * @param row
-   * @param column
-   * @param colour
-   * @param square
-   * @return
-   */
-  @SuppressWarnings("unchecked")
-  public static ArrayList addFieldIfPawnThreatenedsIt(int row, int column, String colour,
-                                                      Square[][] square) {
-
-    ArrayList temp = new ArrayList();
-
-    if (!(row < 0 || column < 0 || row > 7 || column > 7))
-      temp.add(square[row][column]);
-    return temp;
-
-  }
-
-
-  /**
-   * returns a list of moves the current pawn is actually allowed to make.
-   *
-   * @param row
-   * @param column
-   * @param moves
-   * @param square
-   * @return ArrayList <Field>
-   */
-  @SuppressWarnings("unchecked")
-  public static ArrayList allFieldsThePawnIsActuallyAllowedToMove(int row, int column, ArrayList moves,
-                                                                  Square[][] square) {
-    String colour = square[row][column].getPiece().getColour();
-
-    if (square[row][column].getPiece().getColour().equals("white")) {
-      if (column == 6) {
-        if (square[row][column - 1].isEmpty()) {
-          moves.addAll(addFieldIfPawnIsActuallyAllowedToMove(row, column - 2, colour, square));
+  private void updateNormalMoves(int boardModifier, Square from) {
+    if (!isProtectingHisKing()) {
+      try {
+        Square oneSquareAhead = board.getSquareNRowsAhead(from, 1, boardModifier);
+        if (oneSquareAhead.isEmpty()) {
+          //TODO advance one square
         }
 
-        moves.addAll(addFieldIfPawnIsActuallyAllowedToMove(row, column - 1, colour, square));
-
-
-        moves.addAll(addFieldIfPawnIsActuallyAllowedToCapture(row - 1, column - 1, colour,
-                square));
-        moves.addAll(addFieldIfPawnIsActuallyAllowedToCapture(row + 1, column - 1, colour,
-                square));
-      } else {
-        moves.addAll(addFieldIfPawnIsActuallyAllowedToMove(row, column - 1, colour, square));
-        moves.addAll(addFieldIfPawnIsActuallyAllowedToCapture(row - 1, column - 1, colour,
-                square));
-        moves.addAll(addFieldIfPawnIsActuallyAllowedToCapture(row + 1, column - 1, colour,
-                square));
+        if (!hasBeenMoved()) {
+          Square twoSquaresAhead = board.getSquareNRowsAhead(from, 2, boardModifier);
+          if (oneSquareAhead.isEmpty() && twoSquaresAhead.isEmpty()) {
+            //todo advance two squares (only possible in the beginning)
+          }
+        }
+      } catch (SquareNotFoundException e) {
+        //fail silently
       }
-
-    } else if (column == 1) {
-      moves.addAll(addFieldIfPawnIsActuallyAllowedToMove(row, column + 1, colour, square));
-      if (square[row][column + 1].isEmpty()) {
-        moves.addAll(addFieldIfPawnIsActuallyAllowedToMove(row, column + 2, colour, square));
-      }
-
-      moves.addAll(addFieldIfPawnIsActuallyAllowedToCapture(row - 1, column + 1, colour,
-              square));
-      moves.addAll(addFieldIfPawnIsActuallyAllowedToCapture(row + 1, column + 1, colour,
-              square));
-    } else {
-      moves.addAll(addFieldIfPawnIsActuallyAllowedToMove(row, column + 1, colour, square));
-      moves.addAll(addFieldIfPawnIsActuallyAllowedToCapture(row - 1, column + 1, colour,
-              square));
-      moves.addAll(addFieldIfPawnIsActuallyAllowedToCapture(row + 1, column + 1, colour,
-              square));
     }
-    return moves;
-  }
-
-  /**
-   * returns a list of fields the current pawn attacks.
-   *
-   * @param row
-   * @param column
-   * @param moves
-   * @param square
-   * @return ArrayList <Field>
-   */
-  @SuppressWarnings("unchecked")
-  public static ArrayList allFieldsThePawnThreateneds(int row, int column, ArrayList moves,
-                                                      Square[][] square) {
-    String colour = square[row][column].getPiece().getColour();
-
-    if (colour.equals("white")) {
-
-      moves.addAll(addFieldIfPawnThreatenedsIt(row - 1, column - 1, colour,
-              square));
-      moves.addAll(addFieldIfPawnThreatenedsIt(row + 1, column - 1, colour,
-              square));
-
-
-    } else {
-
-
-      moves.addAll(addFieldIfPawnThreatenedsIt(row - 1, column + 1, colour,
-              square));
-      moves.addAll(addFieldIfPawnThreatenedsIt(row + 1, column + 1, colour,
-              square));
-    }
-    return moves;
-  }
-
-
-  @Override
-  String getTextualRepresentation() {
-    return null;
-  }
-
-  @Override
-  public Player getPlayer() {
-    return null;
-  }
-
-  @Override
-  public boolean hasBeenMoved() {
-    return false;
-  }
-
-  @Override
-  public void setHasBeenMoved(boolean hasBeenMoved) {
-
-  }
-
-
-  @Override
-  public String getType() {
-    return null;
-  }
-
-  @Override
-  public void setType(String type) {
-
-  }
-
-  @Override
-  public String getColour() {
-    return null;
-  }
-
-  @Override
-  public void setColour(String colour) {
-
   }
 }
