@@ -5,10 +5,7 @@ import model.pieces.*;
 import utils.BoardUtil;
 import utils.ChessNotationUtil;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Board {
 
@@ -131,6 +128,19 @@ public class Board {
     } else {
       throw new Exception("Invalid Move: " + from.getChessNotation() + " -> " + to.getChessNotation());
     }
+  }
+
+  public List<Square> getSquaresInStraightLineBetween(Square from, Square to){
+
+    List<Square> squares = new ArrayList<>();
+    if(from != to){
+      return squares;
+    }
+
+    //TODO add logic
+
+    return squares;
+
   }
 
   /**

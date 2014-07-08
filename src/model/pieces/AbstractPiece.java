@@ -13,13 +13,23 @@ import java.util.Set;
 /**
  * Created by Markus on 28.06.2014.
  */
-public abstract class AbstractPiece implements Piece {
+public abstract class AbstractPiece implements Piece, AttackingEntity {
 
   protected Player player;
   protected Board board;
   protected String textualRepresentation;
   protected Square currentPosition;
   protected boolean hasBeenMoved;
+
+  public boolean hasBeenCaptured() {
+    return hasBeenCaptured;
+  }
+
+  public void setHasBeenCaptured(boolean hasBeenCaptured) {
+    this.hasBeenCaptured = hasBeenCaptured;
+  }
+
+  protected boolean hasBeenCaptured;
   protected boolean isProtectingHisKing;
   protected List<Move> threats = new ArrayList<>();
   protected List<Move> normalMoves = new ArrayList<>();
@@ -29,6 +39,7 @@ public abstract class AbstractPiece implements Piece {
     this.hasBeenMoved = false;
     this.board = board;
     this.player = player;
+    player.addPiece(this);
   }
 
   public boolean isWhite() {
@@ -36,7 +47,7 @@ public abstract class AbstractPiece implements Piece {
   }
 
   @Override
-  public Set<Square> getAllowFieldsToMoveOnto() {
+  public Set<Square> getAllowedSquaresToMoveOnto() {
     Set<Square> allowedSquares = new HashSet<>();
     getAllMoves().forEach(move -> allowedSquares.add(move.getTo()));
     return allowedSquares;
@@ -106,5 +117,10 @@ public abstract class AbstractPiece implements Piece {
 
   public boolean isProtectingHisKing() {
     return isProtectingHisKing;
+  }
+
+  @Override
+  public boolean isValidMoveDestination(Square destination) {
+    return getAllowedSquaresToMoveOnto().contains(destination);
   }
 }

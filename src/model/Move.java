@@ -27,4 +27,9 @@ public class Move {
   public Square getFrom() {
     return this.from;
   }
+
+  @Override
+  public String toString() {
+    return from.getChessNotation() + "->" + to.getChessNotation()+" ("+moveType+")";
+  }
 }

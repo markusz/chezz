@@ -1,12 +1,15 @@
 package model;
 
 import model.pieces.*;
-import utils.*;
+import utils.ChessNotationUtil;
+import utils.GameUtil;
+import utils.OutputUtil;
+import utils.PersistenceUtil;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 @SuppressWarnings({"unused", "serial"})
@@ -41,7 +44,6 @@ public class Game implements Serializable {
 
     this.fieldManipulationForbidden = fieldManipulationForbidden;
     this.forceMoveOrder = forceMoveOrder;
-    board.markAttackedFields();
   }
 
   public void addToLog(String move) {
@@ -74,7 +76,6 @@ public class Game implements Serializable {
   public void addFigure(Square square, Piece piece) throws Exception {
     if (!fieldManipulationForbidden) {
       square.setPiece(piece);
-      board.markAttackedFields();
     } else {
       throw new Exception("Fieldmanipulation is not allowed.");
     }
@@ -82,7 +83,7 @@ public class Game implements Serializable {
 
   public boolean isCastlingOnWhiteKingsideAllowed() throws Exception {
     Square[][] square = this.getBoard().getSquares();
-    ArrayList threatenedFieldsByBlack = MoveUtil.threatenedFieldsOnWhichAnEnemyKingIsCheck("black", square);
+    Set<Square> threatenedFieldsByBlack = blackPlayer.getAllThreatenedSquares();
     Square E1 = square[4][7];
     Square F1 = square[5][7];
     Square G1 = square[6][7];
@@ -98,7 +99,7 @@ public class Game implements Serializable {
 
   public boolean isCastlingOnWhiteQueensideAllowed() throws Exception {
     Square[][] square = this.getBoard().getSquares();
-    ArrayList threatenedFieldsByBlack = MoveUtil.threatenedFieldsOnWhichAnEnemyKingIsCheck("black", square);
+    Set<Square> threatenedFieldsByBlack = blackPlayer.getAllThreatenedSquares();
     Square A1 = square[0][7];
     Square B1 = square[1][7];
     Square C1 = square[2][7];
@@ -117,7 +118,7 @@ public class Game implements Serializable {
 
   public boolean isCastlingOnBlackKingsideAllowed() throws Exception {
     Square[][] square = this.getBoard().getSquares();
-    ArrayList threatenedFieldsByWhite = MoveUtil.threatenedFieldsOnWhichAnEnemyKingIsCheck("white", square);
+    Set<Square> threatenedFieldsByWhite = whitePlayer.getAllThreatenedSquares();
     Square E8 = square[4][0];
     Square F8 = square[5][0];
     Square G8 = square[6][0];
@@ -135,7 +136,7 @@ public class Game implements Serializable {
 
   public boolean isCastlingOnBlackQueensideAllowed() throws Exception {
     Square[][] square = this.getBoard().getSquares();
-    ArrayList threatenedFieldsByWhite = MoveUtil.threatenedFieldsOnWhichAnEnemyKingIsCheck("white", square);
+    Set<Square> threatenedFieldsByWhite = whitePlayer.getAllThreatenedSquares();
     Square A8 = square[0][0];
     Square B8 = square[1][0];
     Square C8 = square[2][0];
@@ -281,7 +282,6 @@ public class Game implements Serializable {
         }
       }
     }
-    this.getBoard().markAttackedFields();
   }
 
   /**
@@ -374,7 +374,6 @@ public class Game implements Serializable {
       whiteTurn = !whiteTurn;
       throw new Exception("Its not your turn.");
     }
-    this.getBoard().markAttackedFields();
   }
 
   /**
@@ -394,7 +393,9 @@ public class Game implements Serializable {
 
       Square from = board.getSquare(fromRowIndex, fromColumnIndex);
       Square to = board.getSquare(toRowIndex, toColumnIndex);
-      if (!from.isEmpty() && from.getPiece().getPlayer().isWhite() == whiteTurn && (MoveUtil.isValidMove(from, to, board))) {
+
+      //TODO this is possibly still wrong. Write test when code compiles
+      if (!from.isEmpty() && from.getPiece().getPlayer().isWhite() == whiteTurn && from.getPiece().isValidMoveDestination(to)) {
         movePiece(from, to);
         whiteTurn = !whiteTurn;
       }
@@ -466,12 +467,12 @@ public class Game implements Serializable {
               continue;
             }
 
-            Square fromF = getSquareByChessNotation(fromAsString);
-            Square toF = getSquareByChessNotation(toAsString);
+            Square from = getSquareByChessNotation(fromAsString);
+            Square to = getSquareByChessNotation(toAsString);
 
-            if (!fromF.isEmpty() && MoveUtil.isValidMove(fromF, toF, board)) {
+            if (!from.isEmpty() && from.getPiece().isValidMoveDestination(to)) {
 
-              movePiece(fromF, toF);
+              movePiece(from, to);
               System.out.println("	" + fromAsString + " -> " + toAsString);
               whiteTurn = !whiteTurn;
               break;
@@ -490,7 +491,7 @@ public class Game implements Serializable {
             Square from = board.getSquare(fromRowIndex, fromColumnIndex);
             Square to = board.getSquare(toRowIndex, toColumnIndex);
 
-            if (!from.isEmpty() && from.getPiece().isWhite() == whiteTurn && MoveUtil.isValidMove(from, to, board)) {
+            if (!from.isEmpty() && from.getPiece().isWhite() == whiteTurn && from.getPiece().isValidMoveDestination(to)) {
               movePiece(from, to);
               System.out.println("	" + from + " -> " + to);
               whiteTurn = !whiteTurn;
@@ -504,65 +505,28 @@ public class Game implements Serializable {
   }
 
   /**
-   * UNUSED
-   * Prints all allowed moves for a Colour.
-   * <p>
-   * Does NOT consider the fact, that at checked Situation only Moves protecting the King are allowed
-   *
-   * @param colour "white" or "black"
-   * @throws Exception
-   */
-  public void printAllAllowedMovesByColour(String colour) throws Exception {
-    OutputUtil.printAllAllowedMovesByPlayer(this.getBoard(), colour);
-  }
-
-  /**
    * Prints all allowed Moves for a Colour at a Situation, where the given Colour is not check.
    *
    * @throws Exception
    */
   @SuppressWarnings("unchecked")
   public void printAllMovesForColourNotCheck(Player player) throws Exception {
-    ArrayList moves = MoveUtil.getMovesForPlayer(board, player);
-    System.out.println("\n=========================================================================");
-    System.out.println("\n	A List Of Allowed Moves (" + moves.size() + "):\n");
-    for (int i = 0; i < moves.size(); i++) {
-      Move currentMove = (Move) moves.get(i);
-      System.out.println("	" + currentMove.getFrom().getCharRow() + "" + currentMove.getFrom().getIntColumn() + " -> " + currentMove.getTo().getCharRow() + "" + currentMove.getTo().getIntColumn());
-    }
+    System.out.println(getAllMovesForPlayerAsString(player));
   }
 
   @SuppressWarnings("unchecked")
-  public String printAllMovesForColourNotCheckToString(Player player) throws Exception {
-    String movesString = "";
-    ArrayList moves = MoveUtil.getMovesForPlayer(board, player);
-    //movesString = movesString+("\n=========================================================================\n\n");
-    //movesString = movesString+("A List Of Allowed Moves ("+moves.size()+"):\n\n");
-    for (int i = 0; i < moves.size(); i++) {
-      Move currentMove = (Move) moves.get(i);
-      movesString = movesString + ("" + currentMove.getFrom().getCharRow() + "" + currentMove.getFrom().getIntColumn() + " -> " + currentMove.getTo().getCharRow() + "" + currentMove.getTo().getIntColumn() + "\n");
-    }
-    return movesString;
-  }
+  public String getAllMovesForPlayerAsString(Player player) throws Exception {
+    StringBuilder sb = new StringBuilder();
+    Set<Move> moves = player.getAllMoves();
 
-  /**
-   * UNUSED
-   * <p>
-   * Prints every Field between the given board and the enemy King
-   * <p>
-   * Works for Bishop, Rook and Queen.
-   *
-   * @param field
-   * @throws Exception
-   */
-  @SuppressWarnings("unchecked")
-  public void printFieldsBetween(String field) throws Exception {
-    Square enemySquare = this.getBoard().getSquares()[ChessNotationUtil.convertFieldNameToIndexes(field)[0]][ChessNotationUtil.convertFieldNameToIndexes(field)[1]];
-    ArrayList fields = BoardUtil.listOfFieldsBetweenAttackerAndKing(enemySquare, this.getBoard());
-    for (int i = 0; i < fields.size(); i++) {
-      Square current = (Square) fields.get(i);
-      System.out.println(current.getCharRow() + " " + current.getIntColumn());
+    sb.append("\n=========================================================================");
+    sb.append("\n	A List Of Allowed Moves (" + moves.size() + "):\n");
+
+    for (Move move : moves) {
+      sb.append(move.toString());
     }
+
+    return sb.toString();
   }
 
   /**
@@ -585,129 +549,6 @@ public class Game implements Serializable {
   public void printIsCheckMate(String colour) throws Exception {
     OutputUtil.printIsCheckMate(colour, this.board);
   }
-
-//  /**
-//   * Prints a list of all Fields a Colour is actually allowed to move.
-//   *
-//   * @param player
-//   * @throws Exception
-//   */
-//  public void printListOfActuallyAllowedFieldsToMoveByColour(Player player) throws Exception {
-//    Moves.printListOfActuallyAllowedFieldsToMoveByColour(player, board);
-//  }
-
-//  /**
-//   * Prints a List of all Fields a Figure is actually allowed to move.
-//   *
-//   * @param field
-//   * @throws Exception
-//   */
-//  public void printListOfActuallyAllowedFieldsToMoveByFigure(String field) throws Exception {
-//
-//    int[] fieldHelp = ChessNotationUtil.convertFieldNameToIndexes(field);
-//    int row = fieldHelp[0];
-//    int column = fieldHelp[1];
-//    Square[][] squareArray = this.getBoard().getSquares();
-//    System.out
-//            .println("\n=========================================================================\n");
-//    if (!squareArray[row][column].isEmpty())
-//      Moves.printListOfActuallyAllowedFieldsToMoveByFigure(field, squareArray);
-//    else {
-//      System.out.println("	No figure on " + field
-//              + ". Therefore no possible moves could be printed");
-//    }
-//
-//
-//  }
-//
-//  /**
-//   * Prints a List of Figures giving check to the given Colour.
-//   *
-//   * @param player
-//   * @throws Exception
-//   */
-//  public void printListOfFiguresGivingCheckToColour(Player player)
-//          throws Exception {
-//    printBoard();
-//    OutputUtil.printListOfFiguresGivingCheckToColour(player, this.getBoard());
-//  }
-//
-//  /**
-//   * Prints all actually allowed Moves for the given Colour.
-//   * <p>
-//   * Considers if the King is check.
-//   *
-//   * @param player
-//   * @throws Exception
-//   */
-//  public void printListOfMovesAllowedForPlayer(Player player) throws Exception {
-//    if (player.isCheck()) {
-//      printMovesAllowedAtACheckedSituation(player);
-//    } else {
-//      printAllMovesForColourNotCheck(player);
-//    }
-//
-//  }
-//
-//  public String printListOfMovesAllowedForColourToString(Player player) throws Exception {
-//    String moves = "";
-//    if (player.isCheck()) {
-//      moves = moves + printMovesAllowedAtACheckedSituationToString(player);
-//    } else {
-//      moves = moves + printAllMovesForColourNotCheckToString(player);
-//    }
-//
-//    return moves;
-//  }
-//
-//  /**
-//   * UNUSED
-//   * Prints a List of Moves that block the Attacking Line of an attacking Rook, Bishop or Queen.
-//   *
-//   * @param attacker
-//   * @throws Exception
-//   */
-//  public void printListOfMovesBlockingAnAttackersLine(String attacker) throws Exception {
-//
-//    int[] array = ChessNotationUtil.convertFieldNameToIndexes(attacker);
-//    Square attackerSquare = this.board.getSquares()[array[0]][array[1]];
-//    OutputUtil.printMovesToAvoidCheckMateByBlockingAttackersPath(attackerSquare, this.board);
-//  }
-//
-//  /**
-//   * Prints a List of Moves that are allowed at a Check-Situation
-//   *
-//   * @param player
-//   * @throws Exception
-//   */
-//  public void printMovesAllowedAtACheckedSituation(Player player) throws Exception {
-//    ArrayList moves = MoveUtil.movesAllowedAtACheckedSituation(player, board);
-//    System.out.println("\n=========================================================================");
-//    System.out.println("\n	A List Of Allowed Moves for " + player + " (" + moves.size() + "):\n\n");
-//    System.out.println("	Note:");
-//    System.out.println("	You Are Check, Therefore Your Allowed Moves Are Limited To The Following:\n");
-//    for (int i = 0; i < moves.size(); i++) {
-//      Move currentMove = (Move) moves.get(i);
-//      Square currentStart = currentMove.getFrom();
-//      Square currentDestination = currentMove.getTo();
-//
-//      System.out.println("" + currentStart.getCharRow() + "" + currentStart.getIntColumn() + " -> " + currentDestination.getCharRow() + "" + currentDestination.getIntColumn());
-//    }
-//  }
-//
-//  public String printMovesAllowedAtACheckedSituationToString(Player player) throws Exception {
-//    String movesString = "";
-//    ArrayList moves = MoveUtil.movesAllowedAtACheckedSituation(player, board);
-//    movesString = movesString + ("You Are Check!\nTherefore your allowed\nMoves are limited to:\n\n");
-//    for (int i = 0; i < moves.size(); i++) {
-//      Move currentMove = (Move) moves.get(i);
-//      Square currentStart = currentMove.getFrom();
-//      Square currentDestination = currentMove.getTo();
-//
-//      movesString = movesString + ("" + currentStart.getCharRow() + "" + currentStart.getIntColumn() + " -> " + currentDestination.getCharRow() + "" + currentDestination.getIntColumn()+"\n");
-//    }
-//    return movesString;
-//  }
 
   /**
    * Prints the Playingfield at the current Situation.
@@ -796,7 +637,7 @@ public class Game implements Serializable {
       } else if (choice.equals("2")) {
         System.out.print("	The moves for which figur shall be marked?	");
         String field = scanner.next();
-        printBoard(board);
+        board.toString();
       } else if (choice.equals("3")) {
         System.out.print("	Insert wQ for queenside Castling or wK for kingside Castling:	");
 
@@ -870,5 +711,11 @@ public class Game implements Serializable {
    */
   public void setFieldManipulationAllowed(boolean fieldManipulationForbidden) {
     this.fieldManipulationForbidden = fieldManipulationForbidden;
+  }
+
+  @Override
+  //TODO board to string
+  public String toString() {
+    return "TODO board.toString()";
   }
 }
