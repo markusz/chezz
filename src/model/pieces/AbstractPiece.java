@@ -46,6 +46,10 @@ public abstract class AbstractPiece implements Piece {
     return !isProtectingHisKing() && !piece.isSameColor(this) && !(piece instanceof King);
   }
 
+	public boolean checks(Piece piece) {
+		return !piece.isSameColor(this) && (piece instanceof King);
+	}
+
   @Override
   public Set<Square> getAllThreatenedSquares() {
     return null;
