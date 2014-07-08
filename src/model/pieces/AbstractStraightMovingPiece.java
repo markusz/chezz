@@ -37,4 +37,34 @@ public abstract class AbstractStraightMovingPiece extends AbstractPiece {
     }
   return reachableFields;
   }
+
+  public void updatePossibleMovesForDirections(int[][] directions){
+
+    List<Square> all = new LinkedList<>();
+
+    for (int i = 0; i < directions.length; i++) {
+      int columnDirection = directions[i][0];
+      int rowDirection = directions[i][1];
+
+      all.addAll(getSquaresInStraightLineUntilFirstPiece(columnDirection, rowDirection));
+    }
+
+    for (Square square : all) {
+      if (square.isEmpty() && !isProtectingHisKing) {
+        //TODO set to moves
+        //TODO add to threatened squares
+      }
+      if (!square.isEmpty() && !square.getPiece().isSameColor(this)) {
+        if (square.getPiece() instanceof King) {
+          //TODO opponent is check
+        } else {
+          if (isProtectingHisKing) {
+            //TODO piece is threatened
+          } else {
+            //TODO piece can be thrown
+          }
+        }
+      }
+    }
+  }
 }
