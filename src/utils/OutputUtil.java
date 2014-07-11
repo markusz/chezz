@@ -6,6 +6,7 @@ import model.Square;
 import model.Move;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Created by Markus on 28.06.2014.
@@ -20,51 +21,32 @@ public class OutputUtil {
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    public static void printAllAllowedMovesByPlayer(Board board, Player player)
-            throws Exception {
-        ArrayList moveArrayList = MoveUtil.getMovesForPlayer(board, player);
+    public static void printAllAllowedMovesByPlayer(Board board, Player player) throws Exception {
+		Set<Move> moves = player.getAllMoves();
         System.out
                 .println("\n\n=========================================================================");
-        System.out.println("\n	List of possible Moves (" + moveArrayList.size() + ") for " + player + ":\n");
+        System.out.println("\n	List of possible Moves (" + moves.size() + ") for " + player + ":\n");
 
-        for (int i = 0; i < moveArrayList.size(); i++) {
-            printMove((Move) moveArrayList.get(i));
-        }
-        System.out.println("\n\n");
-    }
-
-    /**
-     * Prints a move at the following format:
-     * <p/>
-     * A1 -> A2 (rook)
-     *
-     * @param move
-     * @throws Exception
-     */
-    public static void printMove(Move move) throws Exception {
-        System.out.println("	" + move.getFrom().getCharRow() + ""
-                + move.getFrom().getIntColumn() + " -> "
-                + move.getTo().getCharRow() + ""
-                + move.getTo().getIntColumn() + "  ("
-                + move.getFrom().getPiece() + ")");
+		for (Move move : moves) {
+			System.out.println(move.toString());
+		}
+		System.out.println("\n\n");
     }
 
     /**
      * Prints if the given colour is check
      *
-     * @param colour
-     * @param field
      * @throws Exception
      */
-    public static void printIsCheck(String colour, Board field)
+    public static void printIsCheck(Player player)
             throws Exception {
         System.out
                 .println("\n\n=========================================================================\n");
-        System.out.println("	Checking Threat-Status for " + colour + "...");
-        if (GameUtil.isGivenColourCheck(colour, field))
-            System.out.println("\n	" + colour + " is check!");
+        System.out.println("	Checking Threat-Status for " + player + "...");
+        if (player.isCheck())
+            System.out.println("\n	" + player + " is check!");
         else
-            System.out.println("\n	" + colour + " is not check");
+            System.out.println("\n	" + player + " is not check");
     }
 
     /**
@@ -80,46 +62,6 @@ public class OutputUtil {
             System.out.println("\n	" + colour + " is check mate!\n");
         else
             System.out.println("\n	" + colour + " is not check mate\n");
-    }
-
-    /**
-     * Prints all fields that are giving check to the given colour
-     *
-     * @param colour
-     * @param field
-     * @throws Exception
-     */
-    @SuppressWarnings("unchecked")
-    public static void printListOfFiguresGivingCheckToColour(String colour,
-                                                             Board field) throws Exception {
-        ArrayList temp = GameUtil.figuresGivingCheckToColour(colour, field);
-        if (temp.size() == 0)
-            System.out.println("	No figures giving check to " + colour);
-        else {
-            System.out
-                    .println("\n	The figures on the following fields\n	are giving check to "
-                            + colour + ":\n");
-            for (int i = 0; i < temp.size(); i++) {
-                Square current = (Square) temp.get(i);
-                if (!current.isEmpty())
-                    System.out.println("	" + current.getCharRow() + ""
-                            + current.getIntColumn());
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public static void printMovesToAvoidCheckMateByBlockingAttackersPath(
-            Square attacker, Board field) throws Exception {
-        ArrayList moves = MoveUtil.MovesToAvoidCheckMateByBlockingAttackersPath(
-                attacker, field);
-        for (int i = 0; i < moves.size(); i++) {
-            Move currentMove = (Move) moves.get(i);
-            System.out.println(currentMove.getFrom().getCharRow() + ""
-                    + currentMove.getFrom().getIntColumn() + " -> "
-                    + currentMove.getTo().getCharRow() + ""
-                    + currentMove.getTo().getIntColumn());
-        }
     }
 
   public static void printBoard(Board board) {

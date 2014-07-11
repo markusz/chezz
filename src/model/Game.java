@@ -17,7 +17,12 @@ public class Game implements Serializable {
 
   private boolean forceMoveOrder = true;
   private boolean fieldManipulationForbidden = true;
-  private boolean whiteTurn = true;
+
+	public boolean isWhiteTurn() {
+		return whiteTurn;
+	}
+
+	private boolean whiteTurn = true;
   private int moveCounter = 0;
   private Board board;
 
@@ -45,6 +50,10 @@ public class Game implements Serializable {
     this.fieldManipulationForbidden = fieldManipulationForbidden;
     this.forceMoveOrder = forceMoveOrder;
   }
+
+	public void changeTurn(){
+		whiteTurn = !whiteTurn;
+	}
 
   public void addToLog(String move) {
     log = log + move;
@@ -93,7 +102,7 @@ public class Game implements Serializable {
             && G1.isEmpty() && !threatenedFieldsByBlack.contains(G1)
             && !H1.isEmpty() && !H1.getPiece().hasBeenMoved()
             && !E1.isEmpty() && !E1.getPiece().hasBeenMoved()
-            && !GameUtil.isGivenColourCheck("white", board);
+            && !whitePlayer.isCheck();
 
   }
 
@@ -111,7 +120,7 @@ public class Game implements Serializable {
             && D1.isEmpty() && !threatenedFieldsByBlack.contains(D1)
             && !A1.isEmpty() && !A1.getPiece().hasBeenMoved()
             && !E1.isEmpty() && !E1.getPiece().hasBeenMoved()
-            && !GameUtil.isGivenColourCheck("white", board);
+            && !whitePlayer.isCheck();
 
 
   }
@@ -129,7 +138,7 @@ public class Game implements Serializable {
             && G8.isEmpty() && !threatenedFieldsByWhite.contains(G8)
             && !H8.isEmpty() && !H8.getPiece().hasBeenMoved()
             && !E8.isEmpty() && !E8.getPiece().hasBeenMoved()
-            && !GameUtil.isGivenColourCheck("black", board);
+            && !blackPlayer.isCheck();
 
 
   }
@@ -149,7 +158,7 @@ public class Game implements Serializable {
             && D8.isEmpty() && !threatenedFieldsByWhite.contains(D8)
             && !A8.isEmpty() && !A8.getPiece().hasBeenMoved()
             && !E8.isEmpty() && !E8.getPiece().hasBeenMoved()
-            && !GameUtil.isGivenColourCheck("black", board);
+            && !blackPlayer.isCheck();
   }
 
   public void castleOnBlackQueenside() throws Exception {
@@ -532,11 +541,10 @@ public class Game implements Serializable {
   /**
    * Prints if the current colour is check.
    *
-   * @param colour
    * @throws Exception
    */
-  public void printIsCheck(String colour) throws Exception {
-    OutputUtil.printIsCheck(colour, this.getBoard());
+  public void printIsCheck(Player player) throws Exception {
+    OutputUtil.printIsCheck(player);
   }
 
   /**
@@ -565,7 +573,7 @@ public class Game implements Serializable {
       System.out.println("\n	White is check mate!");
     } else {
 
-      if (GameUtil.isGivenColourCheck("white", getBoard())) {
+      if (whitePlayer.isCheck()) {
 
         System.out.println("\n	White is check!");
       }
@@ -576,7 +584,7 @@ public class Game implements Serializable {
       System.out.println("\n	Black is check mate!");
     } else {
 
-      if (GameUtil.isGivenColourCheck("black", getBoard())) {
+      if (blackPlayer.isCheck()) {
 
         System.out.println("\n	Black is check!");
       }
@@ -595,7 +603,7 @@ public class Game implements Serializable {
       rep = (rep + "\n	White is check mate!\n");
     } else {
 
-      if (GameUtil.isGivenColourCheck("white", getBoard())) {
+      if (whitePlayer.isCheck()) {
 
         rep = (rep + "\n	White is check!\n");
       }
@@ -606,7 +614,7 @@ public class Game implements Serializable {
       rep = (rep + "\n	Black is check mate!\n");
     } else {
 
-      if (GameUtil.isGivenColourCheck("black", getBoard())) {
+      if (whitePlayer.isCheck()) {
 
         rep = (rep + "\n	Black is check!\n");
       }

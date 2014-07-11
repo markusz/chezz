@@ -1,6 +1,5 @@
 package model;
 
-import com.google.common.collect.Sets;
 import model.pieces.AttackingEntity;
 import model.pieces.Piece;
 

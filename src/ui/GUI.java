@@ -57,28 +57,28 @@ public class GUI extends JFrame {
     JMenuItem menuBar1SwitchPlayfield;
     JSeparator sep;
     JOptionPane about;
-    Game test;
+    Game game;
     String startField = null;
     String destinationField = null;
     String log = "";
     boolean startFieldClicked = false;
     JButton[][] buttonArray = new JButton[8][8];
 
-    public GUI(Game test) throws Exception {
-        this.test = test;
+    public GUI(Game game) throws Exception {
+        this.game = game;
         this.getContentPane().setLayout(null);
-        this.initWindow(test);
+        this.initWindow(game);
         this.setBounds(100, 100, 600, 600);
         this.setVisible(true);/**/
     }
 
     public void changeMoveOrderStatus() {
-        if (test.isForceMoveOrder()) {
-            test.setForceMoveOrder(false);
+        if (game.isForceMoveOrder()) {
+            game.setForceMoveOrder(false);
             forceMoveOrder.setSelected(false);
             forceMoveOrder.updateUI();
         } else {
-            test.setForceMoveOrder(true);
+            game.setForceMoveOrder(true);
             forceMoveOrder.setSelected(true);
             forceMoveOrder.updateUI();
         }
@@ -87,11 +87,11 @@ public class GUI extends JFrame {
     public void createRandomSituation() throws Exception {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                test.getBoard().getSquares()[i][j].setEmpty();
+                game.getBoard().getSquares()[i][j].setEmpty();
             }
         }
-        test.createRandomSituation();
-        test.clearLog();
+        game.createRandomSituation();
+        game.clearLog();
         fieldUpdater(buttonArray);
         updateInfoField();
     }
@@ -99,12 +99,12 @@ public class GUI extends JFrame {
     public void createStartingLineup() throws Exception {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                test.getBoard().getSquares()[i][j].setEmpty();
+                game.getBoard().getSquares()[i][j].setEmpty();
             }
         }
-        test.getBoard().createInitialLineup();
-        test.clearLog();
-        test.setTurn("white");
+        game.getBoard().createInitialLineup();
+        game.clearLog();
+        game.changeTurn();
         fieldUpdater(buttonArray);
         updateInfoField();
     }
@@ -130,8 +130,8 @@ public class GUI extends JFrame {
                                 e1.printStackTrace();
                             }
                             if (!startFieldClicked) {
-                                // if(test.getTurn() ==
-                                // test.getBoard().getSquare()[current][current2].getPiece().getColour()){
+                                // if(game.getTurn() ==
+                                // game.getBoard().getSquare()[current][current2].getPiece().getColour()){
                                 textfieldStartingField.setText(ChessNotationUtil
                                         .convertFieldIndexToChessNotation(current, current2));
                                 if (markAllowedFields.isSelected()) {
@@ -221,11 +221,11 @@ public class GUI extends JFrame {
             for (int j = 0; j < 8; j++) {
                 int[] intField = ChessNotationUtil
                         .convertFieldNameToIndexes(textfieldStartingField.getText());
-                Square currentSquare = test.getBoard().getSquares()[intField[0]][intField[1]];
+                Square currentSquare = game.getBoard().getSquares()[intField[0]][intField[1]];
 
                 if (!currentSquare.isEmpty())
                     if (MoveUtil.isValidMove(intField[0],
-                            intField[1], i, j, test.getBoard())) {
+                            intField[1], i, j, game.getBoard())) {
                         buttonArray[i][j].setBorder(new MatteBorder(30, 30, 30, 30,
                                 new Color(255, 80, 90, 120)));
                         buttonArray[i][j].setBorderPainted(true);
@@ -299,7 +299,7 @@ public class GUI extends JFrame {
         ImageIcon temp = null;
         String colourFigure = null;
         String typeFigure = null;
-        Square current = test.getBoard().getSquares()[i][j];
+        Square current = game.getBoard().getSquares()[i][j];
         if (!current.isEmpty()) {
             colourFigure = current.getPiece().getColour();
             typeFigure = current.getPiece().getType();
@@ -575,7 +575,7 @@ public class GUI extends JFrame {
 
         about = new JOptionPane("by morkuzz");
         about.setBounds(500, 300, 300, 100);
-        about.setMessage("test");
+        about.setMessage("game");
         about.setVisible(true);
         // about.showMessageDialog("Eggs are not supposed to be green.",
         // "Message");
@@ -650,7 +650,7 @@ public class GUI extends JFrame {
     }
 
     public void saveGame(String filename) {
-        test.saveSituation(filename);
+        game.saveSituation(filename);
     }
 
     public void changeSize(int x, int y, boolean enabled) {
@@ -673,33 +673,33 @@ public class GUI extends JFrame {
         String destinationField = textfieldDestinationField.getText();
         int[] start = ChessNotationUtil.convertFieldNameToIndexes(startingField);
         int[] destination = ChessNotationUtil.convertFieldNameToIndexes(destinationField);
-        /*if (test.getTurn()=="black"){
+        /*if (game.getTurn()=="black"){
 			//while(true){
-			String[] moves = test.randomMove();
+			String[] moves = game.randomMove();
 			int[] startArray = InputUtil.convertFieldNameToIndexes(startingField);
 			int[] destinationArray = InputUtil.convertFieldNameToIndexes(destinationField);
 			//(MoveValidationUtil.isValidMove(startRow, startColumn, destinationRow, destinationColumn, playField))
-			//if (!(test.getBoard().getSquare()[rowStart][8 - columnStart].isEmpty()) && (field.getSquare()[rowStart][8 - columnStart].getPiece().getColour() == turn) && (MoveValidationUtil.isValidMove(startArray[0], startArray[1], destinationArray[0], destinationArray[1], field))){
-		test.movePiece(startingField, destinationField);
+			//if (!(game.getBoard().getSquare()[rowStart][8 - columnStart].isEmpty()) && (field.getSquare()[rowStart][8 - columnStart].getPiece().getColour() == turn) && (MoveValidationUtil.isValidMove(startArray[0], startArray[1], destinationArray[0], destinationArray[1], field))){
+		game.movePiece(startingField, destinationField);
 		
 		//break;
 		}
 		
 		else*/
 
-        if (!(test.getBoard().getSquares()[start[0]][start[1]].isEmpty())) {
+        if (!(game.getBoard().getSquares()[start[0]][start[1]].isEmpty())) {
 
             if (MoveUtil.isValidMove(start[0], start[1],
-                    destination[0], destination[1], test.getBoard())) {
-                String colour = test.getBoard().getSquares()[start[0]][start[1]]
+                    destination[0], destination[1], game.getBoard())) {
+                String colour = game.getBoard().getSquares()[start[0]][start[1]]
                         .getPiece().getColour();
-                String type = test.getBoard().getSquares()[start[0]][start[1]]
+                String type = game.getBoard().getSquares()[start[0]][start[1]]
                         .getPiece().getType();
-                if (test.getTurn().equals(colour)) {
-                    test.addToLog((startingField + " -> " + destinationField + " ("
+                if (game.getTurn().equals(colour)) {
+                    game.addToLog((startingField + " -> " + destinationField + " ("
                             + colour + " " + type + ")" + "\n"));
                 }
-                test.movePiece(startingField, destinationField);
+                game.movePiece(startingField, destinationField);
 
                 updateInfoField();
                 fieldUpdater(buttonArray);
@@ -708,9 +708,9 @@ public class GUI extends JFrame {
             if ((startingField.equals("E8"))) {
 
                 if (destinationField.equals("G8")) {
-                    test.castling("bK");
+                    game.castling("bK");
 
-                    test.addToLog("Black Kingside Castling\n");
+                    game.addToLog("Black Kingside Castling\n");
                     updateInfoField();
                     fieldUpdater(buttonArray);
                 }
@@ -719,8 +719,8 @@ public class GUI extends JFrame {
             if ((startingField.equals("E8"))) {
 
                 if (destinationField.equals("C8")) {
-                    test.castling("bQ");
-                    test.addToLog("Black Queenside Castling\n");
+                    game.castling("bQ");
+                    game.addToLog("Black Queenside Castling\n");
                     updateInfoField();
                     fieldUpdater(buttonArray);
                 }
@@ -729,9 +729,9 @@ public class GUI extends JFrame {
             if ((startingField.equals("E1"))) {
 
                 if (destinationField.equals("G1")) {
-                    test.castling("wK");
+                    game.castling("wK");
 
-                    test.addToLog("White Kingside Castling\n");
+                    game.addToLog("White Kingside Castling\n");
                     updateInfoField();
                     fieldUpdater(buttonArray);
                 }
@@ -740,9 +740,9 @@ public class GUI extends JFrame {
             if ((startingField.equals("E1"))) {
 
                 if (destinationField.equals("C1")) {
-                    test.castling("wQ");
+                    game.castling("wQ");
 
-                    test.addToLog("White Queenside Castling\n");
+                    game.addToLog("White Queenside Castling\n");
                     updateInfoField();
                     fieldUpdater(buttonArray);
                 }
@@ -803,20 +803,20 @@ public class GUI extends JFrame {
 
     public void updateInfoField() throws Exception {
         if (infoFieldChooser.getSelectedIndex() == 0) {
-            infoField.setText(test
-                    .printListOfMovesAllowedForColourToString(test.getTurn()));
+            infoField.setText(game
+                    .printListOfMovesAllowedForColourToString(game.getTurn()));
         } else if (infoFieldChooser.getSelectedIndex() == 1) {
-            infoField.setText(test.getLog());
+            infoField.setText(game.getLog());
         } else {
             infoField.setText("some text");
         }
 
-        if (!test.isForceMoveOrder()) {
+        if (!game.isForceMoveOrder()) {
             turnLabel.setText(" Free Movement");
             turnLabel.setForeground(Color.DARK_GRAY);
             turnLabel.setBackground(Color.white);
         } else {
-            if (test.getTurn().equals("white")) {
+            if (game.isWhiteTurn()) {
                 turnLabel.setText(" White's Turn");
                 turnLabel.setForeground(Color.black);
                 turnLabel.setBackground(Color.white);
@@ -828,21 +828,20 @@ public class GUI extends JFrame {
             }
         }
 
-        if (GameUtil.isGivenColourCheck("white", test.getBoard())
-                || GameUtil.isGivenColourCheck("black", test.getBoard())) {
-            if (GameUtil.isGivenColourCheck("white", test.getBoard())) {
+        if (game.getWhitePlayer().isCheck() || game.getBlackPlayer().isCheck()) {
+            if (game.getWhitePlayer().isCheck()) {
                 isCheck.setText("White is Check");
                 infoField.setBackground(new Color(255, 128, 124));
             }
-            if (GameUtil.isCheckMate("white", test.getBoard())) {
+            if (GameUtil.isCheckMate("white", game.getBoard())) {
                 infoField.setText("White is Check Mate\nThe Game is Over");
                 infoField.setBackground(new Color(255, 128, 124));
             }
-            if (GameUtil.isGivenColourCheck("black", test.getBoard())) {
+            if (game.getBlackPlayer().isCheck()) {
                 isCheck.setText("Black is Check");
                 infoField.setBackground(new Color(255, 128, 124));
             }
-            if (GameUtil.isCheckMate("black", test.getBoard())) {
+            if (GameUtil.isCheckMate("black", game.getBoard())) {
                 infoField.setText("Black is Check Mate\nThe Game is Over");
                 infoField.setBackground(new Color(255, 128, 124));
             }
@@ -856,7 +855,7 @@ public class GUI extends JFrame {
     }
 
     public void updatePlayField() throws Exception {
-        String field = test.printPlayingFieldString();
+        String field = game.printPlayingFieldString();
         playField.setText(field);
         // fieldAdder();
 
