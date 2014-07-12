@@ -3,10 +3,7 @@ package model;
 import model.pieces.AttackingEntity;
 import model.pieces.Piece;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Created by Markus on 28.06.2014.
@@ -15,8 +12,13 @@ public class Player implements AttackingEntity {
   private static int WHITE = 1;
   private static int BLACK = -1;
   private boolean isWhite;
-  private List<Piece> activePieces;
-  private List<Piece> capturedPieces;
+  private List<Piece> activePieces = new ArrayList<>();
+  private List<Piece> capturedPieces  = new ArrayList<>();
+
+  private Set<Move> allMoves = new TreeSet<>();
+  private Set<Move> allCapuringMoves = new TreeSet<>();
+  private Set<Move> allNormalMoves = new TreeSet<>();
+  private Set<Move> allOtherMoves = new TreeSet<>();
 
   public void addPiece(Piece piece) {
     activePieces.add(piece);
@@ -73,21 +75,56 @@ public class Player implements AttackingEntity {
 
   @Override
   public Set<Move> getAllMoves() {
-    return null;
+    return allMoves;
   }
 
   @Override
   public Set<Move> getAllNormalMoves() {
-    return null;
+    return allNormalMoves;
   }
 
   @Override
   public Set<Move> getAllCapturingMoves() {
-    return null;
+    return allCapuringMoves;
   }
 
   @Override
   public Set<Move> getAllOtherMoves() {
-    return null;
+    return allOtherMoves;
+  }
+
+  private void aggregateCapturingMoves(){
+    allCapuringMoves.clear();
+    for(Piece piece : activePieces){
+      allCapuringMoves.addAll(piece.getAllCapturingMoves());
+    }
+  }
+
+  private void aggregateNormalMoves(){
+    allNormalMoves.clear();
+    for(Piece piece : activePieces){
+      allNormalMoves.addAll(piece.getAllNormalMoves());
+    }
+  }
+
+  private void aggregateOtherMoves(){
+    allOtherMoves.clear();
+    for(Piece piece : activePieces){
+      allOtherMoves.addAll(piece.getAllOtherMoves());
+    }
+  }
+
+  private void aggregateAllMoves(){
+    allMoves.clear();
+    for(Piece piece : activePieces){
+      allMoves.addAll(piece.getAllMoves());
+    }
+  }
+
+  public void updateMovingOptions(){
+    aggregateAllMoves();
+    aggregateNormalMoves();
+    aggregateCapturingMoves();
+    aggregateOtherMoves();
   }
 }

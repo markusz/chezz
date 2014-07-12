@@ -8,7 +8,7 @@ import model.Square;
  */
 public class BoardUtil {
 
-  public static boolean isValidMove(Square from, Square to, Board board) {
+  public static boolean isValidMove(Square from, Square to) {
     return from.getPiece().getAllowedSquaresToMoveOnto().contains(to);
   }
 }

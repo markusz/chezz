@@ -5,6 +5,8 @@ import model.Move;
 import model.Player;
 import model.Square;
 
+import javax.swing.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +22,11 @@ public abstract class AbstractPiece implements Piece, AttackingEntity {
   protected String textualRepresentation;
   protected Square currentPosition;
   protected boolean hasBeenMoved;
+
+  private String imageIconsFolder = "ressource/png/";
+  private String imageIconsFileSuffix = ".png";
+  private ImageIcon imageIconOnDarkSquare;
+  private ImageIcon imageIconOnLightSquare;
 
   public boolean hasBeenCaptured() {
     return hasBeenCaptured;
@@ -37,9 +44,21 @@ public abstract class AbstractPiece implements Piece, AttackingEntity {
 
   public AbstractPiece(Player player) {
     this.hasBeenMoved = false;
-    this.board = board;
     this.player = player;
     player.addPiece(this);
+    initImageIcons();
+  }
+
+  private void initImageIcons() {
+    String color = isWhite() ? "white" : "black";
+    String pieceType = this.getClass().getSimpleName();
+    StringBuilder sb = new StringBuilder().
+            append(imageIconsFolder).
+            append(File.separator).
+            append(color).append(pieceType);
+
+    imageIconOnDarkSquare = new ImageIcon(sb.toString().concat("DarkField").concat(imageIconsFileSuffix));
+    imageIconOnLightSquare = new ImageIcon(sb.toString().concat("WhiteField").concat(imageIconsFileSuffix));
   }
 
   public boolean isWhite() {
@@ -122,5 +141,10 @@ public abstract class AbstractPiece implements Piece, AttackingEntity {
   @Override
   public boolean isValidMoveDestination(Square destination) {
     return getAllowedSquaresToMoveOnto().contains(destination);
+  }
+
+  @Override
+  public ImageIcon getImageIcon(Square square) {
+    return square.isDark() ? imageIconOnDarkSquare : imageIconOnLightSquare;
   }
 }

@@ -12,7 +12,7 @@ public class Board {
 
   private Game game;
   private Square[][] squares;
-  private Collection<Square> iterableSqaures;
+  private Collection<Square> iterableSqaures = new HashSet<Square>();
   private ArrayList<Square> attackedByWhite;
   private ArrayList<Square> attackedByBlack;
   private Map<String, Square> squareMap = new TreeMap<>();
@@ -120,7 +120,7 @@ public class Board {
       throw new Exception("Invalid Move: " + from.getChessNotation() + " is Empty");
     }
 
-    if (BoardUtil.isValidMove(from, to, this)) {
+    if (BoardUtil.isValidMove(from, to)) {
       to.setPiece(from.getPiece());
       from.setEmpty();
       from.getPiece().setHasBeenMoved(true);

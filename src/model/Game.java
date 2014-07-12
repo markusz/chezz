@@ -39,13 +39,17 @@ public class Game implements Serializable {
   private String log = "";
 
   public Game(Boolean startingLineUp, Boolean fieldManipulationForbidden, Boolean forceMoveOrder) throws Exception {
+    board = new Board(this);
+    whitePlayer = Player.getWhitePlayer();
+    blackPlayer = Player.getBlackPlayer();
+
     if (startingLineUp) {
       board.createInitialLineup();
     }
 
-    board = new Board(this);
-    whitePlayer = Player.getWhitePlayer();
-    blackPlayer = Player.getBlackPlayer();
+    whitePlayer.updateMovingOptions();
+    blackPlayer.updateMovingOptions();
+
 
     this.fieldManipulationForbidden = fieldManipulationForbidden;
     this.forceMoveOrder = forceMoveOrder;
@@ -725,5 +729,9 @@ public class Game implements Serializable {
   //TODO board to string
   public String toString() {
     return "TODO board.toString()";
+  }
+
+  public Player getPlayerInTurn() {
+    return isWhiteTurn() ? whitePlayer : blackPlayer;
   }
 }

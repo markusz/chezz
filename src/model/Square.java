@@ -4,6 +4,8 @@ package model;
 import model.pieces.Piece;
 import utils.ChessNotationUtil;
 
+import javax.swing.*;
+
 public class Square {
 
 
@@ -13,6 +15,19 @@ public class Square {
   private Piece piece;
   private int rowIndex;
   private int columnIndex;
+  private String emptyDarkIconPath = "ressource/png/emptyDark.png";
+  private String emptyLightIconPath = "ressource/png/emptyLight.png";
+  private ImageIcon emptyIcon;
+
+  public ImageIcon getIcon() {
+    return isEmpty() ? emptyIcon : piece.getImageIcon(this);
+  }
+
+  public boolean isDark() {
+    return dark;
+  }
+
+  private boolean dark;
 
   public ChessNotation getChessNotation() {
     return chessNotation;
@@ -25,6 +40,8 @@ public class Square {
     this.columnIndex = columnIndex;
     this.chessNotation = new ChessNotation(rowIndex, columnIndex);
     this.piece = piece;
+    this.dark = (rowIndex % 2 == 0 && columnIndex % 2 == 0) || (rowIndex % 2 != 0 && columnIndex % 2 != 0);
+    emptyIcon = new ImageIcon(dark ? emptyDarkIconPath : emptyLightIconPath);
   }
 
   public int getRowIndex() {

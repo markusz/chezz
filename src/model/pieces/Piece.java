@@ -4,6 +4,7 @@ import model.Move;
 import model.Player;
 import model.Square;
 
+import javax.swing.*;
 import java.util.Set;
 
 /**
@@ -24,4 +25,5 @@ public interface Piece extends AttackingEntity {
   public void updatePossibleMoves();
   public boolean isValidMoveDestination(Square destination);
 
+  ImageIcon getImageIcon(Square square);
 }
