@@ -1,6 +1,7 @@
 package model.pieces;
 
 import exceptions.SquareNotFoundException;
+import model.Move;
 import model.Player;
 import model.Square;
 
@@ -21,7 +22,7 @@ public abstract class AbstractStraightMovingPiece extends AbstractPiece {
   public static int RIGHT = 1;
   public static int STAY = 0;
 
-  protected List<Square> getSquaresInStraightLineUntilFirstPiece(int verticalDirection, int horizontalDirection){
+  protected List<Square> getSquaresInStraightLineUntilFirstPiece(int verticalDirection, int horizontalDirection) {
     List<Square> reachableFields = new LinkedList<>();
     for (int steps = 1; steps < 8; steps++) {
       try {
@@ -35,10 +36,10 @@ public abstract class AbstractStraightMovingPiece extends AbstractPiece {
         return reachableFields;
       }
     }
-  return reachableFields;
+    return reachableFields;
   }
 
-  public void updatePossibleMovesForDirections(int[][] directions){
+  public void updatePossibleMovesForDirections(int[][] directions) {
 
     List<Square> all = new LinkedList<>();
 
@@ -50,18 +51,16 @@ public abstract class AbstractStraightMovingPiece extends AbstractPiece {
     }
 
     for (Square square : all) {
-      if (square.isEmpty() && !isProtectingHisKing) {
-        //TODO set to moves
-        //TODO add to threatened squares
-      }
-      if (!square.isEmpty() && !square.getPiece().isSameColor(this)) {
-        if (square.getPiece() instanceof King) {
-          //TODO opponent is check
-        } else {
-          if (isProtectingHisKing) {
-            //TODO piece is threatened
-          } else {
-            //TODO piece can be thrown
+      threatenedSquares.add(square);
+      if(!isProtectingHisKing){
+        if(square.isEmpty()){
+          Move move = new Move(currentPosition, square, Move.NORMAL);
+          addMoveTo(move, normalMoves, allMoves);
+        }
+        else{
+          if(!square.getPiece().isSameColor(this)){
+            Move move = new Move(currentPosition, square, Move.CAPTURE);
+            addMoveTo(move, capturingMoves, allMoves);
           }
         }
       }

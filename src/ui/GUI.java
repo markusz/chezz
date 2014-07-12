@@ -115,9 +115,10 @@ public class GUI extends JFrame {
       for (int j = 0; j < 8; j++) {
         final int current = i;
         final int current2 = j;
-        if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0)) {
           Square square = game.getBoard().getSquare(i, j);
-          buttonArray[i][j] = new JButton(square.getIcon());
+        System.out.println("putting on "+i+" "+j+" "+ChessNotationUtil.convertFieldIndexToChessNotation(i,j)+": "+square.getPiece().getClass());
+
+        buttonArray[i][j] = new JButton(square.getIcon());
           buttonArray[i][j].setBounds(leftDistance + i * fieldSize, topDistance + j * fieldSize, fieldSize, fieldSize);
           this.getContentPane().add(buttonArray[i][j]);
           buttonArray[i][j].addActionListener(arg0 -> {
@@ -145,7 +146,6 @@ public class GUI extends JFrame {
               }
             }
           });
-        }
       }
     }
   }

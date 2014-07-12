@@ -1,10 +1,9 @@
 package model.pieces;
 
 import exceptions.SquareNotFoundException;
+import model.Move;
 import model.Player;
 import model.Square;
-
-import java.util.ArrayList;
 
 public class Pawn extends AbstractPiece {
 
@@ -35,12 +34,14 @@ public class Pawn extends AbstractPiece {
       Square squareLeftAcross = board.getSquareNRowsMColumnsAway(currentPosition, 1, -1, player.getBoardModifier());
       Square squareToLeft = board.getSquareNRowsMColumnsAway(currentPosition, 0, -1, player.getBoardModifier());
 
-      //TODO add to threatened squares
+      threatenedSquares.add(squareLeftAcross);
       if (!squareLeftAcross.isEmpty() && canValidlyCapturePiece(squareLeftAcross.getPiece())) {
-        //TODO can capture
+        Move move = new Move(currentPosition, squareLeftAcross, Move.CAPTURE);
+        addMoveTo(move, capturingMoves, allMoves);
       }
       if(pieceIsOnRequiredRowForEnPassant && !isProtectingHisKing() && squareLeftAcross.isEmpty() && !squareToLeft.getPiece().isSameColor(this) && (squareToLeft.getPiece() instanceof Pawn)){
-        //TODO can capture en passant
+        Move move = new Move(currentPosition, squareLeftAcross, Move.EN_PASSANT);
+        addMoveTo(move, capturingMoves, otherMoves, allMoves);
       }
     } catch (SquareNotFoundException e) {/*fail silently*/}
 
@@ -48,12 +49,14 @@ public class Pawn extends AbstractPiece {
       Square squareRightAcross = board.getSquareNRowsMColumnsAway(currentPosition, 1, 1, player.getBoardModifier());
       Square squareToRight = board.getSquareNRowsMColumnsAway(currentPosition, 0, 1, player.getBoardModifier());
 
-      //TODO add to threatened squares
+      threatenedSquares.add(squareRightAcross);
       if (!squareRightAcross.isEmpty() && canValidlyCapturePiece(squareRightAcross.getPiece())) {
-        //TODO can capture
+        Move move = new Move(currentPosition, squareRightAcross, Move.CAPTURE);
+        addMoveTo(move, capturingMoves, allMoves);
       }
       if(pieceIsOnRequiredRowForEnPassant && !isProtectingHisKing() && squareRightAcross.isEmpty() && !squareToRight.getPiece().isSameColor(this) && (squareToRight.getPiece() instanceof Pawn)){
-        //TODO can capture en passant
+        Move move = new Move(currentPosition, squareRightAcross, Move.EN_PASSANT);
+        addMoveTo(move, capturingMoves, otherMoves, allMoves);
       }
     } catch (SquareNotFoundException e) {/*fail silently*/}
   }
@@ -63,13 +66,15 @@ public class Pawn extends AbstractPiece {
       try {
         Square oneSquareAhead = board.getSquareNRowsAhead(from, 1, boardModifier);
         if (oneSquareAhead.isEmpty()) {
-          //TODO advance one square
+          Move move = new Move(currentPosition, oneSquareAhead, Move.NORMAL);
+          addMoveTo(move, normalMoves, allMoves);
         }
 
         if (!hasBeenMoved()) {
           Square twoSquaresAhead = board.getSquareNRowsAhead(from, 2, boardModifier);
           if (oneSquareAhead.isEmpty() && twoSquaresAhead.isEmpty()) {
-            //todo advance two squares (only possible in the beginning)
+            Move move = new Move(currentPosition, twoSquaresAhead, Move.NORMAL);
+            addMoveTo(move, normalMoves, allMoves);
           }
         }
       } catch (SquareNotFoundException e) {

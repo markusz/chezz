@@ -7,10 +7,10 @@ import model.Square;
 
 import javax.swing.*;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by Markus on 28.06.2014.
@@ -38,8 +38,11 @@ public abstract class AbstractPiece implements Piece, AttackingEntity {
 
   protected boolean hasBeenCaptured;
   protected boolean isProtectingHisKing;
-  protected List<Move> threats = new ArrayList<>();
-  protected List<Move> normalMoves = new ArrayList<>();
+  protected Set<Move> capturingMoves = new TreeSet<>();
+  protected Set<Move> normalMoves = new TreeSet<>();
+  protected Set<Move> allMoves = new TreeSet<>();
+  protected Set<Move> otherMoves = new TreeSet<>();
+  protected Set<Square> threatenedSquares = new TreeSet<>();
 
 
   public AbstractPiece(Player player) {
@@ -54,11 +57,11 @@ public abstract class AbstractPiece implements Piece, AttackingEntity {
     String pieceType = this.getClass().getSimpleName();
     StringBuilder sb = new StringBuilder().
             append(imageIconsFolder).
-            append(File.separator).
+//            append(File.separator).
             append(color).append(pieceType);
 
     imageIconOnDarkSquare = new ImageIcon(sb.toString().concat("DarkField").concat(imageIconsFileSuffix));
-    imageIconOnLightSquare = new ImageIcon(sb.toString().concat("WhiteField").concat(imageIconsFileSuffix));
+    imageIconOnLightSquare = new ImageIcon(sb.toString().concat("LightField").concat(imageIconsFileSuffix));
   }
 
   public boolean isWhite() {
@@ -76,9 +79,9 @@ public abstract class AbstractPiece implements Piece, AttackingEntity {
     return !isProtectingHisKing() && !piece.isSameColor(this) && !(piece instanceof King);
   }
 
-	public boolean checks(Piece piece) {
-		return !piece.isSameColor(this) && (piece instanceof King);
-	}
+  public boolean checks(Piece piece) {
+    return !piece.isSameColor(this) && (piece instanceof King);
+  }
 
   @Override
   public Set<Square> getAllThreatenedSquares() {
@@ -87,12 +90,12 @@ public abstract class AbstractPiece implements Piece, AttackingEntity {
 
   @Override
   public Set<Move> getAllMoves() {
-    return null;
+    return allMoves;
   }
 
   @Override
   public Set<Move> getAllNormalMoves() {
-    return null;
+    return normalMoves;
   }
 
   public String getTextualRepresentation() {
@@ -102,12 +105,12 @@ public abstract class AbstractPiece implements Piece, AttackingEntity {
 
   @Override
   public Set<Move> getAllCapturingMoves() {
-    return null;
+    return capturingMoves;
   }
 
   @Override
   public Set<Move> getAllOtherMoves() {
-    return null;
+    return otherMoves;
   }
 
   public boolean isSameColor(Piece piece) {
@@ -141,6 +144,19 @@ public abstract class AbstractPiece implements Piece, AttackingEntity {
   @Override
   public boolean isValidMoveDestination(Square destination) {
     return getAllowedSquaresToMoveOnto().contains(destination);
+  }
+
+  protected void addMoveTo(Move move, Collection... collections) {
+    for (Collection collection : collections) {
+      collection.add(move);
+    }
+  }
+
+  protected void addMoveTo(Square from, Square to, int moveType, Collection... collections) {
+    Move move = new Move(from, to, moveType);
+    for (Collection collection : collections) {
+      collection.add(move);
+    }
   }
 
   @Override

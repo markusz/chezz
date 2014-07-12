@@ -1,6 +1,7 @@
 package model.pieces;
 
 import exceptions.SquareNotFoundException;
+import model.Move;
 import model.Player;
 import model.Square;
 
@@ -24,10 +25,15 @@ public class King extends AbstractPiece{
           try {
             Square to = board.getSquareNRowsMColumnsAway(currentPosition, row, column, player.getBoardModifier());
 
-            //TODO add to threatened list
+            threatenedSquares.add(to);
             if(!board.isSquareAttackedByOpponentOf(to, player)){
-              if(to.isEmpty() || !to.getPiece().isSameColor(this)){
-                //TODO can move to field (capture or normal move);
+              if(to.isEmpty()){
+                Move move = new Move(currentPosition, to, Move.NORMAL);
+                addMoveTo(move, normalMoves, allMoves);
+              }
+              if(!to.getPiece().isSameColor(this)){
+                Move move = new Move(currentPosition, to, Move.CAPTURE);
+                addMoveTo(move, capturingMoves, allMoves);
               }
             }
           } catch (SquareNotFoundException e) {

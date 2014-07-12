@@ -1,6 +1,6 @@
 package model;
 
-public class Move {
+public class Move implements Comparable<Move>{
 
   public static int NORMAL = 1;
   public static int CAPTURE = 2;
@@ -31,5 +31,16 @@ public class Move {
   @Override
   public String toString() {
     return from.getChessNotation() + "->" + to.getChessNotation()+" ("+moveType+")";
+  }
+
+  @Override
+  public int compareTo(Move move) {
+    if(move.equals(this)){
+      return 0;
+    }
+    if(from.equals(move.getFrom()) && to.equals(move.getTo()) && moveType == move.moveType){
+      return 0;
+    }
+    return 1;
   }
 }

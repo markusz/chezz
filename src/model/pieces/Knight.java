@@ -1,6 +1,7 @@
 package model.pieces;
 
 import exceptions.SquareNotFoundException;
+import model.Move;
 import model.Player;
 import model.Square;
 
@@ -17,9 +18,10 @@ public class Knight extends AbstractStraightMovingPiece {
     for (int i = 0; i < steps.length; i++) {
       try {
         Square to = board.getSquareNRowsMColumnsAway(currentPosition, steps[i][0], steps[i][1], player.getBoardModifier());
-        //TODO threatens square
+        threatenedSquares.add(to);
         if(canValidlyCapturePiece(to.getPiece())){
-          //TODO capture square
+          Move move = new Move(currentPosition, to, Move.CAPTURE);
+          addMoveTo(move, capturingMoves, allMoves);
         }
       } catch (SquareNotFoundException e) {
         continue;
