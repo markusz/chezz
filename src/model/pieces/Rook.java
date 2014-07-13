@@ -1,5 +1,6 @@
 package model.pieces;
 
+import model.Board;
 import model.Move;
 import model.Player;
 import model.Square;
@@ -9,8 +10,8 @@ import java.util.Set;
 
 public class Rook extends AbstractStraightMovingPiece {
 
-  public Rook(Player player){
-    super(player);
+  public Rook(Player player, Board board) {
+    super(player, board);
     textualRepresentation = "R";
   }
 

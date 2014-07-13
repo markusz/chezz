@@ -1,14 +1,15 @@
 package model.pieces;
 
 import exceptions.SquareNotFoundException;
+import model.Board;
 import model.Move;
 import model.Player;
 import model.Square;
 
 public class Pawn extends AbstractPiece {
 
-  public Pawn(Player player) {
-    super(player);
+  public Pawn(Player player, Board board) {
+    super(player, board);
     textualRepresentation = "P";
   }
 

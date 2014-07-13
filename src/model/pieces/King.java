@@ -1,6 +1,7 @@
 package model.pieces;
 
 import exceptions.SquareNotFoundException;
+import model.Board;
 import model.Move;
 import model.Player;
 import model.Square;
@@ -9,8 +10,8 @@ import java.util.ArrayList;
 
 public class King extends AbstractPiece{
 
-  public King(Player player){
-    super(player);
+  public King(Player player, Board board) {
+    super(player, board);;
     textualRepresentation = "K";
   }
 
@@ -30,10 +31,11 @@ public class King extends AbstractPiece{
               if(to.isEmpty()){
                 Move move = new Move(currentPosition, to, Move.NORMAL);
                 addMoveTo(move, normalMoves, allMoves);
-              }
-              if(!to.getPiece().isSameColor(this)){
-                Move move = new Move(currentPosition, to, Move.CAPTURE);
-                addMoveTo(move, capturingMoves, allMoves);
+              }else{
+                if(!to.getPiece().isSameColor(this)){
+                  Move move = new Move(currentPosition, to, Move.CAPTURE);
+                  addMoveTo(move, capturingMoves, allMoves);
+                }
               }
             }
           } catch (SquareNotFoundException e) {

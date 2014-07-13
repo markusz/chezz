@@ -1,12 +1,13 @@
 package model.pieces;
 
+import model.Board;
 import model.Player;
 
 public class Bishop extends AbstractStraightMovingPiece {
 
 
-  public Bishop(Player player) {
-    super(player);
+  public Bishop(Player player, Board board) {
+    super(player, board);
     textualRepresentation = "B";
   }
 

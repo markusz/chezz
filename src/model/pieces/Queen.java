@@ -1,5 +1,6 @@
 package model.pieces;
 
+import model.Board;
 import model.Player;
 
 /**
@@ -7,8 +8,8 @@ import model.Player;
  */
 public class Queen extends AbstractStraightMovingPiece {
 
-  public Queen(Player player) {
-    super(player);
+  public Queen(Player player, Board board) {
+    super(player, board);
     textualRepresentation = "Q";
   }
 

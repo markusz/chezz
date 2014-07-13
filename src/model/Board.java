@@ -13,8 +13,8 @@ public class Board {
   private Game game;
   private Square[][] squares;
   private Collection<Square> iterableSqaures = new HashSet<Square>();
-  private ArrayList<Square> attackedByWhite;
-  private ArrayList<Square> attackedByBlack;
+  private Set<Square> attackedByWhite = new TreeSet<>();
+  private Set<Square> attackedByBlack = new TreeSet<>();
   private Map<String, Square> squareMap = new TreeMap<>();
 
   private Square whiteKingSquare;
@@ -74,43 +74,43 @@ public class Board {
     Player black = game.getBlackPlayer();
     Player white = game.getWhitePlayer();
 
-    setPiece(getSquare("A8"), new Rook(black));
-    setPiece(getSquare("B8"), new Knight(black));
-    setPiece(getSquare("C8"), new Bishop(black));
-    setPiece(getSquare("D8"), new Queen(black));
-    setPiece(getSquare("E8"), new King(black));
+    setPiece(getSquare("A8"), new Rook(black, this));
+    setPiece(getSquare("B8"), new Knight(black, this));
+    setPiece(getSquare("C8"), new Bishop(black, this));
+    setPiece(getSquare("D8"), new Queen(black, this));
+    setPiece(getSquare("E8"), new King(black, this));
     blackKingSquare = getSquare("E8");
-    setPiece(getSquare("F8"), new Bishop(black));
-    setPiece(getSquare("G8"), new Knight(black));
-    setPiece(getSquare("H8"), new Rook(black));
+    setPiece(getSquare("F8"), new Bishop(black, this));
+    setPiece(getSquare("G8"), new Knight(black, this));
+    setPiece(getSquare("H8"), new Rook(black, this));
 
-    setPiece(getSquare("A7"), new Pawn(black));
-    setPiece(getSquare("B7"), new Pawn(black));
-    setPiece(getSquare("C7"), new Pawn(black));
-    setPiece(getSquare("D7"), new Pawn(black));
-    setPiece(getSquare("E7"), new Pawn(black));
-    setPiece(getSquare("F7"), new Pawn(black));
-    setPiece(getSquare("G7"), new Pawn(black));
-    setPiece(getSquare("H7"), new Pawn(black));
+    setPiece(getSquare("A7"), new Pawn(black, this));
+    setPiece(getSquare("B7"), new Pawn(black, this));
+    setPiece(getSquare("C7"), new Pawn(black, this));
+    setPiece(getSquare("D7"), new Pawn(black, this));
+    setPiece(getSquare("E7"), new Pawn(black, this));
+    setPiece(getSquare("F7"), new Pawn(black, this));
+    setPiece(getSquare("G7"), new Pawn(black, this));
+    setPiece(getSquare("H7"), new Pawn(black, this));
 
-    setPiece(getSquare("A1"), new Rook(white));
-    setPiece(getSquare("B1"), new Knight(white));
-    setPiece(getSquare("C1"), new Bishop(white));
-    setPiece(getSquare("D1"), new Queen(white));
-    setPiece(getSquare("E1"), new King(white));
+    setPiece(getSquare("A1"), new Rook(white, this));
+    setPiece(getSquare("B1"), new Knight(white, this));
+    setPiece(getSquare("C1"), new Bishop(white, this));
+    setPiece(getSquare("D1"), new Queen(white, this));
+    setPiece(getSquare("E1"), new King(white, this));
     whiteKingSquare = getSquare("E1");
-    setPiece(getSquare("F1"), new Bishop(white));
-    setPiece(getSquare("G1"), new Knight(white));
-    setPiece(getSquare("H1"), new Rook(white));
+    setPiece(getSquare("F1"), new Bishop(white, this));
+    setPiece(getSquare("G1"), new Knight(white, this));
+    setPiece(getSquare("H1"), new Rook(white, this));
 
-    setPiece(getSquare("A2"), new Pawn(white));
-    setPiece(getSquare("B2"), new Pawn(white));
-    setPiece(getSquare("C2"), new Pawn(white));
-    setPiece(getSquare("D2"), new Pawn(white));
-    setPiece(getSquare("E2"), new Pawn(white));
-    setPiece(getSquare("F2"), new Pawn(white));
-    setPiece(getSquare("G2"), new Pawn(white));
-    setPiece(getSquare("H2"), new Pawn(white));
+    setPiece(getSquare("A2"), new Pawn(white, this));
+    setPiece(getSquare("B2"), new Pawn(white, this));
+    setPiece(getSquare("C2"), new Pawn(white, this));
+    setPiece(getSquare("D2"), new Pawn(white, this));
+    setPiece(getSquare("E2"), new Pawn(white, this));
+    setPiece(getSquare("F2"), new Pawn(white, this));
+    setPiece(getSquare("G2"), new Pawn(white, this));
+    setPiece(getSquare("H2"), new Pawn(white, this));
   }
 
   public void moveFigure(Square from, Square to) throws Exception {
@@ -121,19 +121,24 @@ public class Board {
     }
 
     if (BoardUtil.isValidMove(from, to)) {
-      to.setPiece(from.getPiece());
+      Piece piece = from.getPiece();
+      to.setPiece(piece);
+      piece.setHasBeenMoved(true);
+      piece.setCurrentPositionOnBoard(to);
       from.setEmpty();
-      from.getPiece().setHasBeenMoved(true);
       game.increaseMovesCounter();
+      game.updateBoard();
     } else {
-      throw new Exception("Invalid Move: " + from.getChessNotation() + " -> " + to.getChessNotation());
+      //fail silently
+      //TODO meaningful error message to user
+//      throw new Exception("Invalid Move: " + from.getChessNotation() + " -> " + to.getChessNotation());
     }
   }
 
-  public List<Square> getSquaresInStraightLineBetween(Square from, Square to){
+  public List<Square> getSquaresInStraightLineBetween(Square from, Square to) {
 
     List<Square> squares = new ArrayList<>();
-    if(from != to){
+    if (from != to) {
       return squares;
     }
 
@@ -141,6 +146,10 @@ public class Board {
 
     return squares;
 
+  }
+
+  public void clear() {
+    iterableSqaures.forEach(square -> square.setEmpty());
   }
 
   /**
@@ -151,7 +160,7 @@ public class Board {
    */
   public Square getSquareNRowsAhead(Square start, int n, int boardOrientation) throws SquareNotFoundException {
     try {
-      return squares[start.getRowIndex() + (boardOrientation * n)][start.getColumnIndex()];
+      return squares[start.getRowIndex() + (boardOrientation * -n)][start.getColumnIndex()];
     } catch (ArrayIndexOutOfBoundsException e) {
       throw new SquareNotFoundException();
     }
@@ -175,7 +184,7 @@ public class Board {
 
   public Square getSquareNRowsMColumnsAway(Square start, int n, int m, int boardOrientation) throws SquareNotFoundException {
     try {
-      return squares[start.getRowIndex() + (boardOrientation * n)][start.getColumnIndex() + (boardOrientation * m)];
+      return squares[start.getRowIndex() + (boardOrientation * -n)][start.getColumnIndex() + (boardOrientation * m)];
     } catch (ArrayIndexOutOfBoundsException e) {
       throw new SquareNotFoundException();
     }

@@ -1,6 +1,7 @@
 package model.pieces;
 
 import exceptions.SquareNotFoundException;
+import model.Board;
 import model.Move;
 import model.Player;
 import model.Square;
@@ -12,8 +13,8 @@ import java.util.List;
  * Created by Markus on 06.07.2014.
  */
 public abstract class AbstractStraightMovingPiece extends AbstractPiece {
-  public AbstractStraightMovingPiece(Player player) {
-    super(player);
+  public AbstractStraightMovingPiece(Player player, Board board) {
+    super(player, board);
   }
 
   public static int UP = 1;

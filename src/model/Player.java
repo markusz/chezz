@@ -16,7 +16,7 @@ public class Player implements AttackingEntity {
   private List<Piece> capturedPieces  = new ArrayList<>();
 
   private Set<Move> allMoves = new TreeSet<>();
-  private Set<Move> allCapuringMoves = new TreeSet<>();
+  private Set<Move> allCapturingMoves = new TreeSet<>();
   private Set<Move> allNormalMoves = new TreeSet<>();
   private Set<Move> allOtherMoves = new TreeSet<>();
 
@@ -85,7 +85,7 @@ public class Player implements AttackingEntity {
 
   @Override
   public Set<Move> getAllCapturingMoves() {
-    return allCapuringMoves;
+    return allCapturingMoves;
   }
 
   @Override
@@ -94,9 +94,9 @@ public class Player implements AttackingEntity {
   }
 
   private void aggregateCapturingMoves(){
-    allCapuringMoves.clear();
+    allCapturingMoves.clear();
     for(Piece piece : activePieces){
-      allCapuringMoves.addAll(piece.getAllCapturingMoves());
+      allCapturingMoves.addAll(piece.getAllCapturingMoves());
     }
   }
 
@@ -122,6 +122,10 @@ public class Player implements AttackingEntity {
   }
 
   public void updateMovingOptions(){
+    for(Piece piece : activePieces){
+      piece.updatePossibleMoves();
+    }
+
     aggregateAllMoves();
     aggregateNormalMoves();
     aggregateCapturingMoves();

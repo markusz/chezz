@@ -16,13 +16,11 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Set;
 
-@SuppressWarnings({"unused", "serial"})
 public class GUI extends JFrame {
 
-  int fieldSize = 60;
-  int leftDistance = 40;
-  int topDistance = 40;
+
   JTextField textfieldStartingField;
   JTextField textfieldDestinationField;
   JTextArea playField;
@@ -63,13 +61,13 @@ public class GUI extends JFrame {
   String destinationField = null;
   String log = "";
   boolean startFieldClicked = false;
-  JButton[][] buttonArray = new JButton[8][8];
+  GUISquare[][] squares = new GUISquare[8][8];
 
   public GUI(Game game) throws Exception {
     this.game = game;
     this.getContentPane().setLayout(null);
-    this.initWindow(game);
-    this.setBounds(100, 100, 600, 600);
+    this.initWindow();
+    this.setBounds(100, 100, 1000, 600);
     this.setVisible(true);/**/
   }
 
@@ -86,14 +84,10 @@ public class GUI extends JFrame {
   }
 
   public void createRandomSituation() throws Exception {
-    for (int i = 0; i < 8; i++) {
-      for (int j = 0; j < 8; j++) {
-        game.getBoard().getSquares()[i][j].setEmpty();
-      }
-    }
+    game.getBoard().clear();
     game.createRandomSituation();
     game.clearLog();
-    fieldUpdater(buttonArray);
+    renderBoard();
     updateInfoField();
   }
 
@@ -106,86 +100,69 @@ public class GUI extends JFrame {
     game.getBoard().createInitialLineup();
     game.clearLog();
     game.changeTurn();
-    fieldUpdater(buttonArray);
+    renderBoard();
     updateInfoField();
   }
 
-  public void fieldAdder() {
-    for (int i = 0; i < 8; i++) {
-      for (int j = 0; j < 8; j++) {
-        final int current = i;
-        final int current2 = j;
-          Square square = game.getBoard().getSquare(i, j);
-        System.out.println("putting on "+i+" "+j+" "+ChessNotationUtil.convertFieldIndexToChessNotation(i,j)+": "+square.getPiece().getClass());
+  public void initBoardSquares() {
+    for (int row = 0; row < 8; row++) {
+      for (int column = 0; column < 8; column++) {
+        final int current = row;
+        final int current2 = column;
+        Square square = game.getBoard().getSquare(row, column);
+        //System.out.println("putting on " + row + " " + column + " " + ChessNotationUtil.convertFieldIndexToChessNotation(row, column) + ": " + square.getPiece().getClass());
 
-        buttonArray[i][j] = new JButton(square.getIcon());
-          buttonArray[i][j].setBounds(leftDistance + i * fieldSize, topDistance + j * fieldSize, fieldSize, fieldSize);
-          this.getContentPane().add(buttonArray[i][j]);
-          buttonArray[i][j].addActionListener(arg0 -> {
-            try {
-              fieldUpdater(buttonArray);
-            } catch (Exception e1) {
-              e1.printStackTrace();
-            }
-            if (!startFieldClicked) {
-              textfieldStartingField.setText(ChessNotationUtil.convertFieldIndexToChessNotation(current, current2));
-              if (markAllowedFields.isSelected()) {
-                try {
-                  fieldMarker(buttonArray);
-                } catch (Exception e) {
-                  e.printStackTrace();
-                }
-              }
-              startFieldClicked = true;
-            } else {
-              textfieldDestinationField.setText(ChessNotationUtil.convertFieldIndexToChessNotation(current, current2));
+        squares[row][column] = new GUISquare(square, row, column);
+
+        this.getContentPane().add(squares[row][column]);
+        squares[row][column].addActionListener(arg0 -> {
+          try {
+            renderBoard();
+          } catch (Exception e1) {
+            e1.printStackTrace();
+          }
+          if (!startFieldClicked) {
+            textfieldStartingField.setText(ChessNotationUtil.convertFieldIndexToChessNotation(current, current2));
+            if (markAllowedFields.isSelected()) {
               try {
-                moveFigureClick();
+                markAttackedFields(squares);
               } catch (Exception e) {
                 e.printStackTrace();
               }
             }
-          });
+            startFieldClicked = true;
+          } else {
+            textfieldDestinationField.setText(ChessNotationUtil.convertFieldIndexToChessNotation(current, current2));
+            try {
+              moveFigureClick();
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+          }
+        });
       }
     }
   }
 
-  public void fieldUpdater(JButton[][] buttonArray) {
+  public void renderBoard() {
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
-        Square square = game.getBoard().getSquare(i, j);
-        buttonArray[i][j].setIcon(square.getIcon());
-        buttonArray[i][j].setBorder(null);
+        squares[i][j].render();
       }
     }
   }
 
-  public void fieldMarker(JButton[][] buttonArray) throws Exception {
+  public void markAttackedFields(JButton[][] buttonArray) throws Exception {
     Square from = game.getBoard().getSquare(textfieldStartingField.getText());
-    for (int row = 0; row < 8; row++) {
-      for (int column = 0; column < 8; column++) {
-        Square to = game.getBoard().getSquare(row, column);
-        if (!from.isEmpty())
-          if (BoardUtil.isValidMove(from, to)) {
-            buttonArray[row][column].setBorder(new MatteBorder(30, 30, 30, 30, new Color(255, 80, 90, 120)));
-            buttonArray[row][column].setBorderPainted(true);
-          } else {
-            buttonArray[row][column].setIcon(to.getIcon());
-            buttonArray[row][column].setBorder(null);
-          }
-
-      }
+    if(!from.isEmpty()){
+      Set<Square> attacked = from.getPiece().getAllowedSquaresToMoveOnto();
+      attacked.forEach(square -> square.getGuiSquare().markAsValidTarget());
     }
   }
 
-  public String getFieldString(int i, int j) {
-    String fieldString = ChessNotationUtil.convertFieldIndexToChessNotation(i, j);
-    return fieldString;
-  }
-
-  protected void initWindow(Game test) throws Exception {
+  protected void initWindow() throws Exception {
     // Instanzieren:
-    this.fieldAdder();
+    initBoardSquares();
     // ------------------------
     author = new JLabel("by Markus Ziller");
     author.setBounds(760, 560, 100, 30);
@@ -238,13 +215,13 @@ public class GUI extends JFrame {
     columnLine2.setBounds(530, 38, 20, 480);
     // ------------------------
     playField = new JTextArea();
-    playField.setBounds(9, 0, 9 * fieldSize + 5, 9 * fieldSize + 15);
+    playField.setBounds(9, 0, 9 * GUIConstants.FIELD_SIZE + 5, 9 * GUIConstants.FIELD_SIZE + 15);
     // Border borderPlayfield = new EtchedBorder(1);
     Border borderPlayfield = new MatteBorder(2, 2, 2, 2, Color.DARK_GRAY);
     playField.setBorder(borderPlayfield);
     // ------------------------
     forceMoveOrder = new JCheckBox();
-    forceMoveOrder.setSelected(test.isForceMoveOrder());
+    forceMoveOrder.setSelected(game.isForceMoveOrder());
     forceMoveOrder.setText("Force Move Order");
     forceMoveOrder.setBounds(555, 130, 120, 15);
     forceMoveOrder.setToolTipText("mimimi");
@@ -288,8 +265,8 @@ public class GUI extends JFrame {
     scrollPane = new JScrollPane(infoField);
     // scrollBar.
     // infoField.add(scrollBar);
-    infoField.setBounds(690, 20, 200, 9 * fieldSize - 5);
-    scrollPane.setBounds(690, 20, 200, 9 * fieldSize - 5);
+    infoField.setBounds(690, 20, 200, 9 * GUIConstants.FIELD_SIZE - 5);
+    scrollPane.setBounds(690, 20, 200, 9 * GUIConstants.FIELD_SIZE - 5);
     // infoField.setFont(new Font("arial", 12, 12));
     infoField.setText("");
     // infoField.setCaretColor(Color.RED);
@@ -368,17 +345,6 @@ public class GUI extends JFrame {
 
     });
 
-		/*
-         * menuBar1secondItem = new JMenuItem("New Game");
-		 * menuBar1.add(menuBar1secondItem);
-		 * menuBar1secondItem.addActionListener(new ActionListener() {
-		 * 
-		 * public void actionPerformed(ActionEvent arg0) { try {
-		 * createStartingLineup(); } catch (Exception e) { } }
-		 * 
-		 * });
-		 */
-
     about = new JOptionPane("by morkuzz");
     about.setBounds(500, 300, 300, 100);
     about.setMessage("game");
@@ -419,7 +385,7 @@ public class GUI extends JFrame {
         try {
           moveFigureClick();
           startFieldClicked = false;
-          fieldUpdater(buttonArray);
+          renderBoard();
 
         } catch (Exception e) {
           //
@@ -483,11 +449,11 @@ public class GUI extends JFrame {
 
     if (!from.isEmpty()) {
       if (BoardUtil.isValidMove(from, to)) {
-          game.addToLog((startingField + " -> " + destinationField + " (" + game.getPlayerInTurn() + " " + from.getPiece().getTextualRepresentation() + ")" + "\n"));
+        game.addToLog((startingField + " -> " + destinationField + " (" + game.getPlayerInTurn() + " " + from.getPiece().getTextualRepresentation() + ")" + "\n"));
         game.movePiece(from, to);
 
         updateInfoField();
-        fieldUpdater(buttonArray);
+        renderBoard();
       }
 
       if ((startingField.equals("E8"))) {
@@ -495,7 +461,7 @@ public class GUI extends JFrame {
           game.castleOnBlackKingside();
           game.addToLog("Black Kingside Castling\n");
           updateInfoField();
-          fieldUpdater(buttonArray);
+          renderBoard();
         }
       }
 
@@ -505,7 +471,7 @@ public class GUI extends JFrame {
           game.castleOnBlackQueenside();
           game.addToLog("Black Queenside Castling\n");
           updateInfoField();
-          fieldUpdater(buttonArray);
+          renderBoard();
         }
       }
 
@@ -515,7 +481,7 @@ public class GUI extends JFrame {
           game.castleOnWhiteKingside();
           game.addToLog("White Kingside Castling\n");
           updateInfoField();
-          fieldUpdater(buttonArray);
+          renderBoard();
         }
       }
 
@@ -526,7 +492,7 @@ public class GUI extends JFrame {
 
           game.addToLog("White Queenside Castling\n");
           updateInfoField();
-          fieldUpdater(buttonArray);
+          renderBoard();
         }
       }
     }
@@ -537,10 +503,10 @@ public class GUI extends JFrame {
   }
 
   public void showInfo() throws IOException {
-    if (buttonArray[0][0].isVisible()) {
+    if (squares[0][0].isVisible()) {
       for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-          buttonArray[i][j].setVisible(false);
+          squares[i][j].setVisible(false);
         }
       }
       rowLine.setVisible(false);
@@ -576,7 +542,7 @@ public class GUI extends JFrame {
       columnLine2.setVisible(true);
       for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-          buttonArray[i][j].setVisible(true);
+          squares[i][j].setVisible(true);
         }
       }
 
@@ -626,8 +592,7 @@ public class GUI extends JFrame {
         infoField.setText("Black is Check Mate\nThe Game is Over");
         infoField.setBackground(new Color(255, 128, 124));
       }
-      isCheck.setVisible(false);// isCheck l�schen falls nichtmehr
-      // verwendet
+      isCheck.setVisible(false);// isCheck löschen falls nichtmehr verwendet
 
     } else {
       isCheck.setVisible(false);
@@ -636,10 +601,7 @@ public class GUI extends JFrame {
   }
 
   public void updatePlayField() throws Exception {
-    String field = game.printPlayingFieldString();
-    playField.setText(field);
-    // fieldAdder();
-
+    playField.setText(game.getBoardAsString());
   }
 
 }

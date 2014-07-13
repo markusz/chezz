@@ -45,9 +45,10 @@ public abstract class AbstractPiece implements Piece, AttackingEntity {
   protected Set<Square> threatenedSquares = new TreeSet<>();
 
 
-  public AbstractPiece(Player player) {
+  public AbstractPiece(Player player, Board board) {
     this.hasBeenMoved = false;
     this.player = player;
+    this.board = board;
     player.addPiece(this);
     initImageIcons();
   }

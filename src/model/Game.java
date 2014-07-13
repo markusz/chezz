@@ -18,11 +18,11 @@ public class Game implements Serializable {
   private boolean forceMoveOrder = true;
   private boolean fieldManipulationForbidden = true;
 
-	public boolean isWhiteTurn() {
-		return whiteTurn;
-	}
+  public boolean isWhiteTurn() {
+    return whiteTurn;
+  }
 
-	private boolean whiteTurn = true;
+  private boolean whiteTurn = true;
   private int moveCounter = 0;
   private Board board;
 
@@ -55,9 +55,9 @@ public class Game implements Serializable {
     this.forceMoveOrder = forceMoveOrder;
   }
 
-	public void changeTurn(){
-		whiteTurn = !whiteTurn;
-	}
+  public void changeTurn() {
+    whiteTurn = !whiteTurn;
+  }
 
   public void addToLog(String move) {
     log = log + move;
@@ -176,7 +176,7 @@ public class Game implements Serializable {
       movePiece(a8, d8);
 
       whiteTurn = !whiteTurn;
-      printPlayingField();
+      printBoard();
     }
   }
 
@@ -191,7 +191,7 @@ public class Game implements Serializable {
       movePiece(a1, d1);
 
       whiteTurn = !whiteTurn;
-      printPlayingField();
+      printBoard();
     }
   }
 
@@ -206,7 +206,7 @@ public class Game implements Serializable {
       movePiece(h8, f8);
 
       whiteTurn = !whiteTurn;
-      printPlayingField();
+      printBoard();
     }
   }
 
@@ -222,7 +222,7 @@ public class Game implements Serializable {
       movePiece(e1, g1);
 
       whiteTurn = !whiteTurn;
-      printPlayingField();
+      printBoard();
     }
   }
 
@@ -261,8 +261,8 @@ public class Game implements Serializable {
     Square squareWhite = board.getSquare(rowKingWhite, columnKingWhite);
     Square squareBlack = board.getSquare(rowKingBlack, columnKingBlack);
 
-    squareWhite.setPiece(new King(whitePlayer));
-    squareBlack.setPiece(new King(blackPlayer));
+    squareWhite.setPiece(new King(whitePlayer, board));
+    squareBlack.setPiece(new King(blackPlayer, board));
 
 
     for (int i = 0; i < 8; i++) {
@@ -271,26 +271,26 @@ public class Game implements Serializable {
         if (Math.random() < probability && tempSquare.isEmpty()) {
           if (Math.random() < 0.5) {
             if (Math.random() < 0.4)
-              tempSquare.setPiece(new Pawn(whitePlayer));
+              tempSquare.setPiece(new Pawn(whitePlayer, board));
             else if (Math.random() < 0.55)
-              tempSquare.setPiece(new Rook(whitePlayer));
+              tempSquare.setPiece(new Rook(whitePlayer, board));
             else if (Math.random() < 0.7)
-              tempSquare.setPiece(new Bishop(whitePlayer));
+              tempSquare.setPiece(new Bishop(whitePlayer, board));
             else if (Math.random() < 0.85)
-              tempSquare.setPiece(new Knight(whitePlayer));
+              tempSquare.setPiece(new Knight(whitePlayer, board));
             else if (Math.random() < 1)
-              tempSquare.setPiece(new Queen(whitePlayer));
+              tempSquare.setPiece(new Queen(whitePlayer, board));
           } else {
             if (Math.random() < 0.4)
-              tempSquare.setPiece(new Pawn(blackPlayer));
+              tempSquare.setPiece(new Pawn(blackPlayer, board));
             else if (Math.random() < 0.55)
-              tempSquare.setPiece(new Rook(blackPlayer));
+              tempSquare.setPiece(new Rook(blackPlayer, board));
             else if (Math.random() < 0.7)
-              tempSquare.setPiece(new Bishop(blackPlayer));
+              tempSquare.setPiece(new Bishop(blackPlayer, board));
             else if (Math.random() < 0.85)
-              tempSquare.setPiece(new Knight(blackPlayer));
+              tempSquare.setPiece(new Knight(blackPlayer, board));
             else if (Math.random() < 1)
-              tempSquare.setPiece(new Queen(blackPlayer));
+              tempSquare.setPiece(new Queen(blackPlayer, board));
           }
         }
       }
@@ -362,7 +362,7 @@ public class Game implements Serializable {
 
     } catch (Exception e) {
     }
-    loadedGame.printPlayingField();
+    loadedGame.printBoard();
     return loadedGame;
 
   }
@@ -382,11 +382,12 @@ public class Game implements Serializable {
       throw new Exception("No figure to be moved on " + from.getChessNotation());
     }
 
-    if (!forceMoveOrder || from.getPiece().getPlayer().isWhite() == whiteTurn) {
-      board.moveFigure(from, to);
-      whiteTurn = !whiteTurn;
-      throw new Exception("Its not your turn.");
+    if (forceMoveOrder && from.getPiece().getPlayer().isWhite() != whiteTurn) {
+      //fail silently
+      //TODO meaningful error message to user
     }
+    board.moveFigure(from, to);
+    whiteTurn = !whiteTurn;
   }
 
   /**
@@ -449,11 +450,11 @@ public class Game implements Serializable {
    * @throws Exception
    */
   public void moveRandomConfirmMoves(boolean moveManually, boolean mainMenu) throws Exception {
-    printPlayingField();
+    printBoard();
 
     while (this.countFigures() > 2) {
       if (GameUtil.isCheckMate("white", this.board) || GameUtil.isCheckMate("black", this.board)) {
-        printPlayingField();
+        printBoard();
         break;
       }
       if (moveManually) {
@@ -536,7 +537,7 @@ public class Game implements Serializable {
     sb.append("\n	A List Of Allowed Moves (" + moves.size() + "):\n");
 
     for (Move move : moves) {
-      sb.append(move.toString());
+      sb.append(move.toString()).append("\n");
     }
 
     return sb.toString();
@@ -567,65 +568,36 @@ public class Game implements Serializable {
    *
    * @throws Exception
    */
-  public void printPlayingField() throws Exception {
-
-    System.out.println("\n\n============================= " + getMovesCounter()
-            + ". Move ===================================");
-    System.out.print("                                                          � Markus Ziller");
-    OutputUtil.printBoard(this.getBoard());
-    if (GameUtil.isCheckMate("white", getBoard())) {
-      System.out.println("\n	White is check mate!");
-    } else {
-
-      if (whitePlayer.isCheck()) {
-
-        System.out.println("\n	White is check!");
-      }
-    }
-
-
-    if (GameUtil.isCheckMate("black", getBoard())) {
-      System.out.println("\n	Black is check mate!");
-    } else {
-
-      if (blackPlayer.isCheck()) {
-
-        System.out.println("\n	Black is check!");
-      }
-    }
-
+  public void printBoard() throws Exception {
+    System.out.println(getBoardAsString());
   }
 
-  public String printPlayingFieldString() throws Exception {
-    String rep = "";
+  public String getBoardAsString() throws Exception {
 
-    rep = (rep + "\n\n============================= " + getMovesCounter()
-            + ". Move ===================================\n");
-    rep = (rep + "                                                          � Markus Ziller\n\n\n");
-    rep = (rep + OutputUtil.getCurrentGameSituationAsString(this.getBoard()));
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("\n\n============================= ").
+            append(getMovesCounter()).
+            append(". Move ===================================\n");
+
+    sb.append("                                                          � Markus Ziller\n\n\n");
+    sb.append(OutputUtil.getCurrentGameSituationAsString(this.getBoard()));
     if (GameUtil.isCheckMate("white", getBoard())) {
-      rep = (rep + "\n	White is check mate!\n");
-    } else {
-
-      if (whitePlayer.isCheck()) {
-
-        rep = (rep + "\n	White is check!\n");
-      }
+      sb.append("\n	White is check mate!\n");
     }
-
+    if (whitePlayer.isCheck()) {
+      sb.append("\n	White is check!\n");
+    }
 
     if (GameUtil.isCheckMate("black", getBoard())) {
-      rep = (rep + "\n	Black is check mate!\n");
-    } else {
-
-      if (whitePlayer.isCheck()) {
-
-        rep = (rep + "\n	Black is check!\n");
-      }
+      sb.append("\n	Black is check mate!\n");
+    }
+    if (whitePlayer.isCheck()) {
+      sb.append("\n	Black is check!\n");
     }
 
-    return rep;
 
+    return sb.toString();
   }
 
   public void mainMenu() throws Exception {
@@ -670,19 +642,6 @@ public class Game implements Serializable {
         System.out.println();
         break;
       } else if (choice.equals("addF")) {
-                    /*System.out.println();
-                    System.out.print("	Insert board:	");
-										Scanner fieldScanner = new Scanner(System.in);
-										String board = fieldScanner.next();
-										System.out.println();
-										System.out.print("	Insert type:	");
-										Scanner typeScanner = new Scanner(System.in);
-										String type = typeScanner.next();
-										System.out.println();
-										System.out.print("	Insert colour:	");
-										Scanner colourScanner = new Scanner(System.in);
-										String colour = colourScanner.next();
-										this.getBoard().setFigureWithoutValidityCheck(board, type, colour);*/
 
       } else if (choice.equals("4")) {
         System.out.println();
@@ -733,5 +692,10 @@ public class Game implements Serializable {
 
   public Player getPlayerInTurn() {
     return isWhiteTurn() ? whitePlayer : blackPlayer;
+  }
+
+  public void updateBoard() {
+    whitePlayer.updateMovingOptions();
+    blackPlayer.updateMovingOptions();
   }
 }

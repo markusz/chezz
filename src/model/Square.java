@@ -2,11 +2,12 @@ package model;
 
 
 import model.pieces.Piece;
+import ui.GUISquare;
 import utils.ChessNotationUtil;
 
 import javax.swing.*;
 
-public class Square {
+public class Square implements Comparable<Square> {
 
 
   private boolean threatendByWhite = false;
@@ -18,6 +19,16 @@ public class Square {
   private String emptyDarkIconPath = "ressource/png/emptyDark.png";
   private String emptyLightIconPath = "ressource/png/emptyLight.png";
   private ImageIcon emptyIcon;
+
+  public GUISquare getGuiSquare() {
+    return guiSquare;
+  }
+
+  public void setGuiSquare(GUISquare guiSquare) {
+    this.guiSquare = guiSquare;
+  }
+
+  private GUISquare guiSquare;
 
   public ImageIcon getIcon() {
     return isEmpty() ? emptyIcon : piece.getImageIcon(this);
@@ -92,4 +103,9 @@ public class Square {
     this.threatendByBlack = threatendByBlack;
   }
 
+  @Override
+  public int compareTo(Square o) {
+
+    return this.equals(o) ? 0 : 1;
+  }
 }
