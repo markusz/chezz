@@ -164,4 +164,10 @@ public abstract class AbstractPiece implements Piece, AttackingEntity {
   public ImageIcon getImageIcon(Square square) {
     return square.isDark() ? imageIconOnDarkSquare : imageIconOnLightSquare;
   }
+
+	@Override
+	public void throwPiece() {
+		hasBeenCaptured = true;
+		player.pieceHasBeenCaptured(this);
+	}
 }

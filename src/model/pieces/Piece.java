@@ -24,6 +24,7 @@ public interface Piece extends AttackingEntity {
   public boolean isSameColor(Piece piece);
   public void updatePossibleMoves();
   public boolean isValidMoveDestination(Square destination);
+	public void throwPiece();
 
   ImageIcon getImageIcon(Square square);
 }

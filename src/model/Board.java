@@ -122,6 +122,9 @@ public class Board {
 
     if (BoardUtil.isValidMove(from, to)) {
       Piece piece = from.getPiece();
+if(!to.isEmpty()){
+	to.getPiece().throwPiece();
+}
       to.setPiece(piece);
       piece.setHasBeenMoved(true);
       piece.setCurrentPositionOnBoard(to);
