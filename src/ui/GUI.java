@@ -225,41 +225,27 @@ public class GUI extends JFrame {
     forceMoveOrder.setText("Force Move Order");
     forceMoveOrder.setBounds(555, 130, 120, 15);
     forceMoveOrder.setToolTipText("mimimi");
-    forceMoveOrder.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent arg0) {
-        changeMoveOrderStatus();
-      }
-    });
+    forceMoveOrder.addActionListener(arg0 -> changeMoveOrderStatus());
     // ------------------------
     markAllowedFields = new JCheckBox();
     markAllowedFields.setSelected(true);
     markAllowedFields.setText("Mark Possible Fields");
     markAllowedFields.setBounds(555, 150, 120, 15);
-    markAllowedFields.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent arg0) {
-      }
-
-    });
+    markAllowedFields.addActionListener(arg0 -> {});
     // ------------------------
     infoFieldChooser = new JComboBox();
     infoFieldChooser.addItem("Allowed Moves for Color");
     infoFieldChooser.addItem("Show Game History");
     infoFieldChooser.addItem("-to do-");
     infoFieldChooser.setBounds(690, 0, 180, 20);
-    infoFieldChooser.addActionListener(new ActionListener() {
+    infoFieldChooser.addActionListener(arg0 -> {
+	  try {
+		updateInfoField();
+	  } catch (Exception e) {
 
-      public void actionPerformed(ActionEvent arg0) {
-        try {
-          updateInfoField();
-        } catch (Exception e) {
-
-          e.printStackTrace();
-        }
-      }
-
-    });
+		e.printStackTrace();
+	  }
+	});
     // ------------------------
     infoField = new JTextArea();
     scrollPane = new JScrollPane(infoField);
@@ -284,29 +270,21 @@ public class GUI extends JFrame {
 
     menuBar1NewGame = new JMenuItem("New Game");
     menuBar1.add(menuBar1NewGame);
-    menuBar1NewGame.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent arg0) {
-        try {
-          createStartingLineup();
-        } catch (Exception e) {
-        }
-      }
-
-    });
+    menuBar1NewGame.addActionListener(arg0 -> {
+	  try {
+		createStartingLineup();
+	  } catch (Exception e) {
+	  }
+	});
 
     menuBar1RandomSituation = new JMenuItem("Create Random Situation");
     menuBar1.add(menuBar1RandomSituation);
-    menuBar1RandomSituation.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent arg0) {
-        try {
-          createRandomSituation();
-        } catch (Exception e) {
-        }
-      }
-
-    });
+    menuBar1RandomSituation.addActionListener(arg0 -> {
+	  try {
+		createRandomSituation();
+	  } catch (Exception e) {
+	  }
+	});
 
     menuBar1Save = new JMenuItem("Save Game");
     menuBar1.add(menuBar1Save);
@@ -332,18 +310,14 @@ public class GUI extends JFrame {
       menuBar1SwitchPlayfield.setText("Show additional Information");
     }
     menuBar1.add(menuBar1SwitchPlayfield);
-    menuBar1SwitchPlayfield.addActionListener(new ActionListener() {
+    menuBar1SwitchPlayfield.addActionListener(arg0 -> {
+	  if (infoField.isEnabled()) {
+		changeSize(600, 600, false);
 
-      public void actionPerformed(ActionEvent arg0) {
-        if (infoField.isEnabled()) {
-          changeSize(600, 600, false);
-
-        } else {
-          changeSize(900, 600, true);
-        }
-      }
-
-    });
+	  } else {
+		changeSize(900, 600, true);
+	  }
+	});
 
     about = new JOptionPane("by morkuzz");
     about.setBounds(500, 300, 300, 100);
@@ -379,22 +353,18 @@ public class GUI extends JFrame {
 
     makeMoveButton = new JButton("Make Move");
     makeMoveButton.setBounds(575, 90, 90, 20);
-    makeMoveButton.addActionListener(new ActionListener() {
+    makeMoveButton.addActionListener(arg0 -> {
+	  try {
+		moveFigureClick();
+		startFieldClicked = false;
+		renderBoard();
 
-      public void actionPerformed(ActionEvent arg0) {
-        try {
-          moveFigureClick();
-          startFieldClicked = false;
-          renderBoard();
+	  } catch (Exception e) {
+		//
+		e.printStackTrace();
+	  }
 
-        } catch (Exception e) {
-          //
-          e.printStackTrace();
-        }
-
-      }
-
-    });
+	});
 
     this.setMinimumSize(new Dimension(910, 650));
     this.getContentPane().add(textfieldStartingField);

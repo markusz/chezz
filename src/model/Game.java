@@ -226,11 +226,6 @@ public class Game implements Serializable {
     }
   }
 
-  /**
-   * Counts the Figures currently in the Game
-   *
-   * @return
-   */
   public int countFigures() {
     Square[][] squareArray = this.board.getSquares();
     int counter = 0;
@@ -243,13 +238,6 @@ public class Game implements Serializable {
     return counter;
   }
 
-  /**
-   * Creates a random Game Situation with a default adding Probability of 0.3.
-   * <p>
-   * Nevertheless it is ensured that a King of every Colour exists.
-   *
-   * @throws Exception if the second king is random on the firsts King board.
-   */
   public void createRandomSituation(double probability) throws Exception {
 
     Random r = new Random();
@@ -297,29 +285,14 @@ public class Game implements Serializable {
     }
   }
 
-  /**
-   * Creates a random Game Situation with a given adding Probability.
-   *
-   * @throws Exception
-   */
   public void createRandomSituation() throws Exception {
     createRandomSituation(0.3);
   }
 
-  /**
-   * Returns the Board of the Current Game.
-   *
-   * @return
-   */
   public Board getBoard() {
     return board;
   }
 
-  /**
-   * Returns if Fieldmanipulation is allowed.
-   *
-   * @return
-   */
   public boolean isFieldManipulationForbidden() {
     return fieldManipulationForbidden;
   }
@@ -329,31 +302,14 @@ public class Game implements Serializable {
     return board.getSquare(indexes[0], indexes[1]);
   }
 
-  /**
-   * Returns if Forced Move Order is on or off.
-   *
-   * @return
-   */
   public boolean isForceMoveOrder() {
     return forceMoveOrder;
   }
 
-  /**
-   * Enables or disables the Forced Move Order
-   *
-   * @param forceMoveOrder
-   */
   public void setForceMoveOrder(boolean forceMoveOrder) {
     this.forceMoveOrder = forceMoveOrder;
   }
 
-  /**
-   * Loads a saved Game Situation. NOT WORKING YET.
-   *
-   * @param filename
-   * @return
-   * @throws Exception
-   */
   public Game loadSituation(String filename) throws Exception { //buggy
     Game loadedGame = this;
     try {
@@ -367,16 +323,6 @@ public class Game implements Serializable {
 
   }
 
-  /**
-   * Moves the figure on startingfield to destinationfield
-   * <p>
-   * Precondition:
-   * destinationfield is not empty and Move has been validated inside movePiece method
-   *
-   * @param from
-   * @param to
-   * @throws Exception
-   */
   public void movePiece(Square from, Square to) throws Exception {
     if (from.isEmpty()) {
       throw new Exception("No figure to be moved on " + from.getChessNotation());
@@ -543,24 +489,8 @@ public class Game implements Serializable {
     return sb.toString();
   }
 
-  /**
-   * Prints if the current colour is check.
-   *
-   * @throws Exception
-   */
   public void printIsCheck(Player player) throws Exception {
     OutputUtil.printIsCheck(player);
-  }
-
-  /**
-   * UNUSED
-   * Prints if the current colour is check mate
-   *
-   * @param colour
-   * @throws Exception
-   */
-  public void printIsCheckMate(String colour) throws Exception {
-    OutputUtil.printIsCheckMate(colour, this.board);
   }
 
   /**
@@ -676,7 +606,7 @@ public class Game implements Serializable {
   }
 
   /**
-   * Allows or Forbiddens to manually add or remove Figures
+   * Allows or Forbids to manually add or remove Figures
    *
    * @param fieldManipulationForbidden
    */
